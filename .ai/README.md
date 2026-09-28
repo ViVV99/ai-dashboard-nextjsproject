@@ -30,3 +30,4 @@ com gráficos de vendas, compras e acessos.
 ## Tasks
 
 - [Backlog do MVP (F0–F9)](./tasks/backlog.md)
+- [F1 — Banco + seed: plano de implementação](./tasks/f1-banco-seed.md)
