@@ -143,3 +143,14 @@ vite.config.ts.timestamp-*
 .vite/
 .agents/
 .dev
+# next
+next-env.d.ts
+
+# sqlite (F1)
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.sqlite-*

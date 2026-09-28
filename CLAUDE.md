@@ -1,3 +1,5 @@
+@AGENTS.md
+
 ## Projeto
 
 Dashboard interativo com gráficos de compra, venda de produtos, acessos de uma loja.
@@ -41,10 +43,12 @@ As pastas que deves adicionar são:
 
 ```bash
 yarn install         # instalar dependências
-yarn dev             # dev server em localhost:5173
+yarn dev             # dev server em localhost:3000
 yarn build           # build de produção (zero erros TS obrigatório)
 yarn test            # Vitest (watch mode)
 yarn test:run        # Vitest (CI, uma execução)
+yarn test:coverage   # Vitest com cobertura (v8)
 yarn lint            # ESLint
-yarn format          # Prettier
+yarn typecheck       # next typegen + tsc --noEmit
+yarn format          # Prettier (write) · yarn format:check para CI
 ```
