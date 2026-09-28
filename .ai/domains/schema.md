@@ -74,8 +74,25 @@ Métricas derivadas: [métricas](./metricas.md)
 - `purchases(created_at)`, `page_views(created_at)`, `page_views(source)`
 - `users(email)` UNIQUE
 
-## Seed
+Os valores permitidos nos CHECK vêm de `src/types/domain.ts` (fonte única para tipos,
+banco e Zod). Mudou um valor? Rode `yarn db:generate` para criar a migration.
 
-- Cerca de 12 meses de dados com sazonalidade (fins de semana e fim de ano mais fortes).
-- 1 admin inicial (credenciais via variáveis de ambiente, nunca hardcoded) e alguns viewers.
-- O seed é determinístico (seed fixa de PRNG) para os testes serem reprodutíveis.
+## Migrations
+
+- Schema: `src/server/db/schema.ts` · migrations geradas em `drizzle/` (versionadas).
+- `yarn db:generate` cria a migration a partir do schema; `yarn db:migrate` aplica.
+- `createDatabase` liga `foreign_keys` (desligado por padrão no SQLite) e WAL em arquivo.
+
+## Seed (`yarn db:seed`)
+
+- **Apaga e recria** todos os dados numa única transação: ou tudo entra, ou nada muda.
+  Bloqueado com `NODE_ENV=production`. Variáveis em `.env.example`.
+- Determinístico: mesma `SEED_RANDOM_SEED` + `SEED_END_DATE` ⇒ mesmos dados (PRNG mulberry32).
+  Só os hashes de senha variam (salt aleatório).
+- Volume para 365 dias: 6 categorias, 25 produtos, 400 clientes, ~10,5 mil pedidos,
+  ~16 mil itens, ~780 compras, ~474 mil acessos (~13 s, ~60 MB).
+- Sazonalidade: fim de semana ×1,3; novembro/dezembro ×1,5; crescimento de 0,85 a 1,15.
+  Pedidos: 90% pagos, 6% cancelados, 4% reembolsados. Custo = 50–70% do preço.
+- Usuários com ids fixos: admin (id 1) a partir de `SEED_ADMIN_*`; com `SEED_VIEWER_PASSWORD`,
+  3 viewers de demonstração (`viewer1..3@exemplo.com`, o 3º bloqueado).
+- Horários gerados no dia local de São Paulo e gravados em UTC.

@@ -54,8 +54,8 @@ linhas a partir de um PRNG com seed; `seedDatabase` limpa e insere tudo numa tra
 
 - [ ] Vitest com dois projetos: `node` (`src/server/**`) e `dom` (resto, jsdom)
 - [ ] Testes (banco `:memory:` migrado), cada um RED antes do schema:
-  `rejeita role fora de ROLES`, `rejeita e-mail duplicado`, `rejeita status de pedido inválido`,
-  `rejeita quantidade ≤ 0`, `rejeita preço negativo`, `rejeita item com pedido inexistente (FK)`
+      `rejeita role fora de ROLES`, `rejeita e-mail duplicado`, `rejeita status de pedido inválido`,
+      `rejeita quantidade ≤ 0`, `rejeita preço negativo`, `rejeita item com pedido inexistente (FK)`
 - [ ] Schema com CHECK gerado de `ROLES`/`USER_STATUSES`/`ORDER_STATUSES`/`TRAFFIC_SOURCES` e índices do spec
 - [ ] `yarn db:generate` gera a migration; testes → PASS; commit `feat(db): schema e migrations`
 
@@ -66,8 +66,8 @@ linhas a partir de um PRNG com seed; `seedDatabase` limpa e insere tudo numa tra
 `categories, products, customers, orders, orderItems, purchases, pageViews` (ids explícitos).
 
 - [ ] Testes RED: `mesma seed gera dataset idêntico`; `total do pedido = soma dos itens`;
-  `status ~90% paid`; `custo do produto entre 50% e 70% do preço`; `todas as datas dentro do período local`;
-  `page_views de produto têm product_id e path /produtos/{id}`
+      `status ~90% paid`; `custo do produto entre 50% e 70% do preço`; `todas as datas dentro do período local`;
+      `page_views de produto têm product_id e path /produtos/{id}`
 - [ ] Implementar em funções ≤ 40 linhas (uma por tabela); rodar → PASS; commit `feat(seed): geradores`
 
 ### Task 5: Seed no banco + usuários + CLI
@@ -80,8 +80,8 @@ linhas a partir de um PRNG com seed; `seedDatabase` limpa e insere tudo numa tra
 `seedDatabase(db, options): Promise<SeedSummary>` (contagens por tabela).
 
 - [ ] Testes RED: senha fraca rejeitada; env sem admin → erro que cita a variável;
-  `seed duas vezes → mesmas contagens`; `admin com hash argon2 que verifica a senha`;
-  `viewers só existem com SEED_VIEWER_PASSWORD (3, sendo 1 bloqueado)`; `e-mail normalizado em minúsculas`
+      `seed duas vezes → mesmas contagens`; `admin com hash argon2 que verifica a senha`;
+      `viewers só existem com SEED_VIEWER_PASSWORD (3, sendo 1 bloqueado)`; `e-mail normalizado em minúsculas`
 - [ ] Implementar: hash antes da transação; transação limpa tabelas (ordem das FKs) e insere em lotes de 500
 - [ ] CLI recusa `NODE_ENV=production`; scripts `db:generate`, `db:migrate`, `db:seed`
 - [ ] Rodar `yarn db:migrate && yarn db:seed` com env de exemplo; conferir contagens; commit `feat(seed): seed e CLI`

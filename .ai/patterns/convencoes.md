@@ -32,7 +32,10 @@ Complementa as convenções críticas do `CLAUDE.md`.
 
 ## Testes (Vitest)
 
-- Services e regras de negócio: testes unitários com SQLite em memória + seed fixa.
+- Services e regras de negócio: testes com SQLite `:memory:` migrado
+  (`createDatabase(':memory:')` + `migrateDatabase`) e seed fixa.
+- Vitest tem dois projetos: `node` (`src/server/**`) e `dom` (jsdom, o resto).
+- Constraints do banco são testadas com SQL cru (`db.$client`), fora da camada tipada.
 - Componentes: Testing Library (comportamento, não implementação).
 - Todo bug fix vem com um teste de regressão.
 - Testes ficam colocalizados em `src/` (`*.test.ts(x)`); é o único local lido pelo Vitest.
