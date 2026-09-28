@@ -43,6 +43,22 @@ describe('parseSeedEnv', () => {
     expect(env.viewerPassword).toBe('viewer123');
   });
 
+  it('trata variáveis vazias (KEY= copiado do .env.example) como ausentes', () => {
+    const env = parseSeedEnv(
+      {
+        ...ADMIN,
+        SEED_VIEWER_PASSWORD: '',
+        SEED_END_DATE: '',
+        SEED_RANDOM_SEED: '',
+        SEED_DAYS: '',
+      },
+      NOW,
+    );
+
+    expect(env).toMatchObject({ seed: 20260928, endDay: '2026-09-28', days: 365 });
+    expect(env.viewerPassword).toBeUndefined();
+  });
+
   it('falha citando a variável quando o e-mail do admin falta', () => {
     expect(() => parseSeedEnv({ SEED_ADMIN_PASSWORD: 'senhaForte1' }, NOW)).toThrow(
       /SEED_ADMIN_EMAIL/,

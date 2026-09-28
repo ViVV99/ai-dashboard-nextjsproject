@@ -36,7 +36,9 @@ export function parseSeedEnv(
   env: Record<string, string | undefined>,
   now: Date = new Date(),
 ): SeedEnv {
-  const result = envSchema.safeParse(env);
+  // `KEY=` (vazio, como no .env.example) conta como ausente e recebe o padrão.
+  const defined = Object.fromEntries(Object.entries(env).filter(([, value]) => value !== ''));
+  const result = envSchema.safeParse(defined);
   if (!result.success) {
     const problems = result.error.issues.map(
       (issue) => `${issue.path.join('.')}: ${issue.message}`,
