@@ -54,3 +54,9 @@ Complementa as convenções críticas do `CLAUDE.md`.
 - `AppRouterCacheProvider` vem de `@mui/material-nextjs/v16-appRouter`.
 - O tema declara `CssThemeVariables { enabled: true }` (module augmentation) para tipar
   `theme.vars` e `theme.colorSchemes`.
+
+## Commits feitos por agentes
+
+- Hook do Claude Code (`.claude/settings.json` → `.claude/hooks/pre-commit-check.sh`) roda
+  `yarn lint` e `yarn test:run` antes de qualquer `git commit`; se falharem, o commit é bloqueado.
+- Vale só para commits feitos pelo agente, não para `git commit` no terminal.
