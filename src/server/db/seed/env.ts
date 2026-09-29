@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { todayInStore } from '../../../lib/dates';
 import { passwordSchema } from '../../../schemas/password';
 import type { LocalDay } from './calendar';
 
@@ -13,8 +14,6 @@ export type SeedEnv = {
   viewerPassword: string | undefined;
 };
 
-const SAO_PAULO_OFFSET_MS = 3 * 60 * 60 * 1000;
-
 const envSchema = z.object({
   DATABASE_URL: z.string().min(1).default('./data/app.db'),
   SEED_ADMIN_EMAIL: z.email('informe um e-mail válido'),
@@ -25,11 +24,6 @@ const envSchema = z.object({
   SEED_END_DATE: z.iso.date('use o formato YYYY-MM-DD').optional(),
   SEED_DAYS: z.coerce.number().int().min(1).max(730).default(365),
 });
-
-/** Dia corrente da loja (America/Sao_Paulo, UTC-3). */
-function todayInSaoPaulo(now: Date): LocalDay {
-  return new Date(now.getTime() - SAO_PAULO_OFFSET_MS).toISOString().slice(0, 10);
-}
 
 /** Lê e valida o ambiente. O erro cita as variáveis, nunca os valores (evita vazar senhas). */
 export function parseSeedEnv(
@@ -50,7 +44,7 @@ export function parseSeedEnv(
   return {
     databaseUrl: data.DATABASE_URL,
     seed: data.SEED_RANDOM_SEED,
-    endDay: data.SEED_END_DATE ?? todayInSaoPaulo(now),
+    endDay: data.SEED_END_DATE ?? todayInStore(now),
     days: data.SEED_DAYS,
     admin: {
       name: data.SEED_ADMIN_NAME,

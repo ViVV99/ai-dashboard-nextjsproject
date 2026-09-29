@@ -33,3 +33,13 @@ export async function requirePageUser(): Promise<SessionUser> {
     throw error;
   }
 }
+
+/** Para Server Components com perfil exigido: sem sessão → login; sem permissão → visão geral. */
+export async function requirePageRole(role: Role): Promise<SessionUser> {
+  try {
+    return await requireRole(role);
+  } catch (error) {
+    if (!(error instanceof AuthError)) throw error;
+    redirect(error.status === 403 ? '/' : '/login');
+  }
+}

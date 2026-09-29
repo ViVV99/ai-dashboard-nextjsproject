@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
 # Hook PreToolUse (Bash) do Claude Code: antes de qualquer `git commit`, roda lint e
 # testes. Se falharem, sai com código 2, o que bloqueia o commit e devolve o erro ao agente.
+# Checa a working tree (não só o que está staged). É rede de segurança, não garantia.
 set -uo pipefail
 
-command=$(jq -r '.tool_input.command // ""')
+hooks_dir=$(dirname "${BASH_SOURCE[0]}")
 
-# Detecta `git commit` também em comandos compostos (`cd x && git commit ...`, `git -C dir commit`).
-if ! grep -Eq '(^|[;&|[:space:]])git([[:space:]]+-C[[:space:]]+[^[:space:]]+)?[[:space:]]+commit([[:space:]]|$)' <<<"$command"; then
+# Falha fechada: entrada que não dá para interpretar bloqueia em vez de liberar.
+if ! command=$(jq -er '.tool_input.command // ""'); then
+  echo "Hook de commit: entrada inválida (JSON esperado); comando bloqueado." >&2
+  exit 2
+fi
+
+if ! bash "$hooks_dir/is-git-commit.sh" <<<"$command"; then
   exit 0
 fi
 

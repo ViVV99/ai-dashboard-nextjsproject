@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createDatabase, migrateDatabase, type AppDatabase } from '../db/client';
 import { users } from '../db/schema';
-import { requirePageUser, requireRole, requireUser } from './index';
+import { requirePageRole, requirePageUser, requireRole, requireUser } from './index';
 
 const { auth, redirect, state } = vi.hoisted(() => ({
   auth: vi.fn(),
@@ -71,5 +71,25 @@ describe('requirePageUser', () => {
     auth.mockResolvedValue(null);
 
     await expect(requirePageUser()).rejects.toThrow('REDIRECT /login');
+  });
+});
+
+describe('requirePageRole', () => {
+  it('admin passa', async () => {
+    auth.mockResolvedValue(sessionOf('1'));
+
+    await expect(requirePageRole('admin')).resolves.toMatchObject({ id: 1, role: 'admin' });
+  });
+
+  it('viewer em página de admin → redireciona para a visão geral', async () => {
+    auth.mockResolvedValue(sessionOf('2'));
+
+    await expect(requirePageRole('admin')).rejects.toThrow(/^REDIRECT \/$/);
+  });
+
+  it('sem sessão → redireciona para o login', async () => {
+    auth.mockResolvedValue(null);
+
+    await expect(requirePageRole('admin')).rejects.toThrow('REDIRECT /login');
   });
 });

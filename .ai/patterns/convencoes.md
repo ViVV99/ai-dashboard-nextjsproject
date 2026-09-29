@@ -17,6 +17,9 @@ Complementa as convenções críticas do `CLAUDE.md`.
 - Node.js é o runtime padrão (inclusive no `src/proxy.ts`); não usar Edge com o banco.
 - Proxy (`src/proxy.ts`) só faz checagem otimista; autorização real fica nos services.
 - `loading.tsx` e `error.tsx` em cada segmento do dashboard.
+- O layout `(dashboard)` exige sessão (`requirePageUser`) e passa ao `AppShell` só dados
+  serializáveis e necessários à casca (nome e perfil). Páginas admin chamam `requirePageRole`.
+- `error.tsx` recebe `retry` (Next 16) e mostra mensagem genérica com o `digest`.
 
 ## Formulários
 
@@ -60,3 +63,6 @@ Complementa as convenções críticas do `CLAUDE.md`.
 - Hook do Claude Code (`.claude/settings.json` → `.claude/hooks/pre-commit-check.sh`) roda
   `yarn lint` e `yarn test:run` antes de qualquer `git commit`; se falharem, o commit é bloqueado.
 - Vale só para commits feitos pelo agente, não para `git commit` no terminal.
+- A detecção fica em `is-git-commit.sh` (testada em `src/tooling/claude-hook.test.ts`). Aliases
+  (`git ci`) e comandos montados dinamicamente escapam: é rede de segurança, não garantia.
+- Entrada inválida bloqueia (falha fechada). A checagem roda na working tree, não só no staged.
