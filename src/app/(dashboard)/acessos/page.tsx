@@ -4,19 +4,19 @@ import { PageHeader } from '@/components/page-header';
 import { PeriodFilter } from '@/features/period/period-filter';
 import { resolvePeriod } from '@/schemas/period';
 
-export const metadata: Metadata = { title: 'Visão geral' };
+export const metadata: Metadata = { title: 'Acessos' };
 
-export default async function OverviewPage({ searchParams }: PageProps<'/'>) {
+export default async function AccessPage({ searchParams }: PageProps<'/acessos'>) {
   const { period, invalid } = resolvePeriod(await searchParams);
 
   return (
     <>
       <PageHeader
-        title="Visão geral"
-        description="Receita, pedidos e acessos da loja no período."
+        title="Acessos"
+        description="Visitas, visitantes únicos, páginas e origens."
         actions={<PeriodFilter period={period} invalid={invalid} />}
       />
-      <ComingSoon>Os indicadores chegam na próxima etapa (F4).</ComingSoon>
+      <ComingSoon>Os gráficos de acessos chegam na F7.</ComingSoon>
     </>
   );
 }
