@@ -1,4 +1,5 @@
 import { hash } from '@node-rs/argon2';
+import { normalizeEmail } from '@/schemas/auth';
 import type { SQLiteTable } from 'drizzle-orm/sqlite-core';
 import type { UserStatus } from '../../../types/domain';
 import type { AppDatabase } from '../client';
@@ -47,8 +48,6 @@ const TABLES_TO_CLEAR = [
   customers,
   users,
 ] as const;
-
-const normalizeEmail = (email: string) => email.trim().toLowerCase();
 
 async function buildUsers(options: SeedOptions): Promise<UserRow[]> {
   const admin: UserRow = {
