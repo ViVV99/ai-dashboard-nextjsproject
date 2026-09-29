@@ -4,7 +4,7 @@ import Stack from '@mui/material/Stack';
 
 export default function DashboardLoading() {
   return (
-    <Box aria-busy="true" aria-label="Carregando">
+    <Box role="status" aria-busy="true" aria-label="Carregando">
       <Skeleton variant="text" width={220} height={40} />
       <Skeleton variant="text" width={320} sx={{ mb: 3 }} />
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2 }}>

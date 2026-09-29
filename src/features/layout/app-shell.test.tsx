@@ -13,8 +13,8 @@ const { logoutAction, pathname } = vi.hoisted(() => ({
 vi.mock('@/features/auth/actions', () => ({ logoutAction }));
 vi.mock('next/navigation', () => ({ usePathname: () => pathname.current }));
 
-const admin: ShellUser = { name: 'Ana Admin', email: 'ana@exemplo.com', role: 'admin' };
-const viewer: ShellUser = { name: 'Vitor Viewer', email: 'vitor@exemplo.com', role: 'viewer' };
+const admin: ShellUser = { name: 'Ana Admin', role: 'admin' };
+const viewer: ShellUser = { name: 'Vitor Viewer', role: 'viewer' };
 
 function renderShell(user: ShellUser, children: ReactNode = <p>conteúdo</p>) {
   return render(

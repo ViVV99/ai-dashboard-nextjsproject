@@ -17,7 +17,7 @@ import { UserMenu } from './user-menu';
 
 const DRAWER_WIDTH = 248;
 
-export type ShellUser = { name: string; email: string; role: Role };
+export type ShellUser = { name: string; role: Role };
 
 function Brand() {
   return (
