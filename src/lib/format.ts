@@ -1,3 +1,5 @@
+import type { KpiFormat } from '@/types/metrics';
+
 // Formatação pt-BR para a UI. Valores monetários chegam em centavos.
 
 const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -23,4 +25,12 @@ export const formatVariation = (value: number) => signedPercent.format(value);
 export function formatDate(isoDate: string): string {
   const [year, month, day] = isoDate.split('-');
   return `${day}/${month}/${year}`;
+}
+
+/** Valor de KPI conforme o tipo; `null` (razão sem denominador) vira "—". */
+export function formatKpiValue(format: KpiFormat, value: number | null) {
+  if (value === null) return '—';
+  if (format === 'currency') return formatCurrency(value);
+  if (format === 'percent') return formatPercent(value);
+  return formatInteger(value);
 }
