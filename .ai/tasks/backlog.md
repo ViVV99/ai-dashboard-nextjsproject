@@ -11,7 +11,7 @@ Referências: [arquitetura](../architeture/overview.md) · [rotas](../context/ro
 | F0  | Fundação do projeto                 | —          | ✅     |
 | F1  | Banco + seed                        | F0         | ✅     |
 | F2  | Autenticação e perfis               | F1         | ✅     |
-| F3  | Layout e filtro de período          | F2         | ⬜     |
+| F3  | Layout e filtro de período          | F2         | ✅     |
 | F4  | Visão geral (KPIs)                  | F3         | ⬜     |
 | F5  | Vendas                              | F3         | ⬜     |
 | F6  | Compras                             | F3         | ⬜     |
@@ -40,7 +40,7 @@ Referências: [arquitetura](../architeture/overview.md) · [rotas](../context/ro
 - Um usuário bloqueado ou com `session_version` desatualizado recebe 401.
 - Testes: login válido/inválido, bloqueado, viewer em rota admin (403).
 
-### F3 — Layout e filtro
+### F3 — Layout e filtro ([plano](./f3-layout.md))
 
 - Menu lateral conforme o perfil, barra superior com usuário e logout, alternância de tema.
 - Filtro de período na URL, validado por Zod; o padrão é 30 dias.
