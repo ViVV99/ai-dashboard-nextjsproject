@@ -1,58 +1,30 @@
-import NextAuth, { CredentialsSignin } from 'next-auth';
+import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import { loginSchema } from '@/schemas/auth';
 import { getDb } from '../db';
+import { authorizeCredentials, jwtCallback, SESSION_MAX_AGE_S, sessionCallback } from './callbacks';
 import { createCredentialsVerifier } from './credentials';
-import { loadSessionUser, tokenClaims } from './session';
 
-/** Código exposto na URL/erro quando o rate limit do login é atingido. */
-export class RateLimitedSignin extends CredentialsSignin {
-  override code = 'rate_limited';
-}
+export { RateLimitedSignin } from './callbacks';
 
 // Singleton: os contadores do rate limit vivem na memória deste processo.
 let verifier: ReturnType<typeof createCredentialsVerifier> | undefined;
 const getVerifier = () => (verifier ??= createCredentialsVerifier(getDb()));
 
-/** IP do cliente. Só é confiável atrás de um proxy reverso que reescreve o cabeçalho. */
-const clientIp = (request: Request) =>
-  request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+// Proxies confiáveis à frente da app (o próprio `next start` conta como 1).
+const trustedHops = Number(process.env.AUTH_TRUSTED_PROXY_HOPS) || 1;
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  session: { strategy: 'jwt', maxAge: 8 * 60 * 60 },
+  session: { strategy: 'jwt', maxAge: SESSION_MAX_AGE_S },
   pages: { signIn: '/login' },
   providers: [
     Credentials({
       credentials: { email: {}, password: {} },
-      async authorize(credentials, request) {
-        const parsed = loginSchema.safeParse(credentials);
-        if (!parsed.success) return null;
-        const result = await getVerifier()(parsed.data, clientIp(request));
-        if (result.ok) return { ...result.user, id: String(result.user.id) };
-        if (result.reason === 'rate_limited') throw new RateLimitedSignin();
-        return null;
-      },
+      authorize: (credentials, request) =>
+        authorizeCredentials(credentials, request, getVerifier(), trustedHops),
     }),
   ],
   callbacks: {
-    // Revalida a cada leitura: bloqueio ou session_version novo → null → cookie removido.
-    async jwt({ token, user }) {
-      if (user) {
-        return { ...token, sub: user.id, role: user.role, sessionVersion: user.sessionVersion };
-      }
-      const current = await loadSessionUser(getDb(), tokenClaims(token));
-      return current ? { ...token, name: current.name, role: current.role } : null;
-    },
-    session({ session, token }) {
-      if (token.sub && token.role && token.sessionVersion !== undefined) {
-        session.user = {
-          ...session.user,
-          id: token.sub,
-          role: token.role,
-          sessionVersion: token.sessionVersion,
-        };
-      }
-      return session;
-    },
+    jwt: (params) => jwtCallback(getDb(), params),
+    session: sessionCallback,
   },
 });

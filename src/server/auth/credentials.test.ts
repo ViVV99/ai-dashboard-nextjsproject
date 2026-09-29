@@ -90,6 +90,16 @@ describe('createCredentialsVerifier', () => {
     });
   });
 
+  it('11ª tentativa no mesmo e-mail com IPs variados → rate_limited', async () => {
+    const check = createCredentialsVerifier(db);
+    for (let i = 0; i < 10; i++) await check(login('admin@exemplo.com', 'errada123'), `ip-${i}`);
+
+    expect(await check(login('admin@exemplo.com'), 'ip-novo')).toEqual({
+      ok: false,
+      reason: 'rate_limited',
+    });
+  });
+
   it('sucesso zera o contador de e-mail+IP', async () => {
     const check = createCredentialsVerifier(db);
     for (let i = 0; i < 4; i++) await check(login('admin@exemplo.com', 'errada123'), 'ip');

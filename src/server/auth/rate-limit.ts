@@ -9,7 +9,13 @@ export type RateLimiter = {
   size(): number;
 };
 
-type RateLimiterOptions = { limit: number; windowMs: number; now?: () => number };
+type RateLimiterOptions = {
+  limit: number;
+  windowMs: number;
+  /** Teto de chaves vivas; acima dele, chaves novas são recusadas (proteção de memória). */
+  maxKeys?: number;
+  now?: () => number;
+};
 type Entry = { count: number; resetAt: number };
 
 // Acima deste número de chaves, as expiradas são varridas antes de inserir uma nova.
@@ -18,6 +24,7 @@ const SWEEP_THRESHOLD = 1000;
 export function createRateLimiter({
   limit,
   windowMs,
+  maxKeys = 10_000,
   now = Date.now,
 }: RateLimiterOptions): RateLimiter {
   const entries = new Map<string, Entry>();
@@ -31,7 +38,8 @@ export function createRateLimiter({
       const time = now();
       let entry = entries.get(key);
       if (!entry || entry.resetAt <= time) {
-        if (entries.size >= SWEEP_THRESHOLD) sweep(time);
+        if (entries.size >= Math.min(SWEEP_THRESHOLD, maxKeys)) sweep(time);
+        if (entries.size >= maxKeys) return { allowed: false, retryAfterMs: windowMs };
         entry = { count: 0, resetAt: time + windowMs };
         entries.set(key, entry);
       }

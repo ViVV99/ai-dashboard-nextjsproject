@@ -24,7 +24,7 @@ Plano: [F2](../tasks/f2-auth.md)
 
 1. O `LoginForm` valida com `loginSchema` e chama `loginAction(input, callbackUrl)`.
 2. A action chama `signIn('credentials')`, que roda o `authorize` do provider.
-3. O `authorize` aplica o rate limit (IP e e-mail+IP), busca o usuário e roda o argon2
+3. O `authorize` aplica o rate limit (IP, e-mail e e-mail+IP), busca o usuário e roda o argon2
    (contra um hash fictício se o e-mail não existe). Qualquer falha vira a mesma mensagem.
 4. Em sucesso, o JWT recebe `sub`, `role` e `sessionVersion`, e o usuário é redirecionado
    para o `callbackUrl` (só caminhos internos, ver `safeCallbackUrl`).
@@ -32,7 +32,8 @@ Plano: [F2](../tasks/f2-auth.md)
 ## Revogação da sessão
 
 - O callback `jwt` revalida o token no banco **a cada leitura de sessão** (1 consulta por PK).
-  Se o usuário foi bloqueado ou o `session_version` mudou, retorna `null` e o Auth.js
+  Se o usuário foi bloqueado, o `session_version` mudou ou passaram 8 h do login (`loginAt`),
+  retorna `null` e o Auth.js
   remove o cookie. Assim, no proxy, o usuário cai para `/login` sem loop de redirects.
 - `requireUser`/`requireRole` revalidam de novo (defesa em profundidade). Use-os em todo
   service, action e route handler. Em Server Components, use `requirePageUser`.
@@ -49,6 +50,10 @@ Plano: [F2](../tasks/f2-auth.md)
 ## Limitações conhecidas
 
 - O rate limit fica em memória: exige **instância única** e zera a cada restart.
-- O IP vem do 1º valor de `x-forwarded-for`, que o cliente pode forjar se não houver um
-  proxy reverso que reescreva o cabeçalho. O limite por e-mail+IP continua valendo.
-- A sessão dura 8 h (`maxAge`), sem renovação por atividade.
+- O IP é o valor do `x-forwarded-for` à esquerda dos `AUTH_TRUSTED_PROXY_HOPS` proxies
+  confiáveis (contados da direita). Sem proxy reverso (`next start` exposto), o cliente
+  controla o cabeçalho e o limite por IP pode ser contornado. O **limite por e-mail
+  (10/15 min, qualquer IP)** continua valendo, mas permite que alguém bloqueie o login de uma
+  conta por 15 min.
+- A sessão expira 8 h após o login (`loginAt`), mesmo com uso contínuo.
+- Um erro do banco no callback `jwt` faz o Auth.js remover o cookie (o usuário é deslogado).

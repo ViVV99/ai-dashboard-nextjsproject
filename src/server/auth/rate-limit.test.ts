@@ -57,4 +57,14 @@ describe('createRateLimiter', () => {
 
     expect(limiter.size()).toBe(1);
   });
+
+  it('com maxKeys chaves vivas, recusa chaves novas mas mantém as existentes', () => {
+    const limiter = createRateLimiter({ limit: 5, windowMs: WINDOW, maxKeys: 2, now: () => 0 });
+    limiter.hit('a');
+    limiter.hit('b');
+
+    expect(limiter.hit('c').allowed).toBe(false);
+    expect(limiter.hit('a').allowed).toBe(true);
+    expect(limiter.size()).toBe(2);
+  });
 });

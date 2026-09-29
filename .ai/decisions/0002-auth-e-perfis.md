@@ -30,7 +30,9 @@ pode, como alterar o cadastro de viewers e bloqueá-los.
 8. **Rate limit no login**, em duas chaves:
    - 5 tentativas por e-mail+IP a cada 15 min;
    - 20 tentativas por IP a cada 15 min, independente do e-mail (contra
-     credential stuffing).
+     credential stuffing);
+   - 10 tentativas por e-mail a cada 15 min, de qualquer IP (F2: o IP pode ser
+     forjado sem proxy reverso).
      Fica em memória no MVP, o que **exige instância única** do servidor.
 9. **Tempo de resposta constante no login:** se o e-mail não existe, o
    `verify` do argon2 roda contra um hash fictício. Isso evita descobrir

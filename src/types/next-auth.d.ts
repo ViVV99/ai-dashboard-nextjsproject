@@ -16,5 +16,7 @@ declare module '@auth/core/jwt' {
   interface JWT {
     role?: Role;
     sessionVersion?: number;
+    /** Epoch (ms) do login; a sessão expira 8 h depois, mesmo com uso contínuo. */
+    loginAt?: number;
   }
 }

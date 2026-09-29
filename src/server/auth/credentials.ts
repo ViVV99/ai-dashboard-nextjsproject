@@ -10,6 +10,7 @@ import { createRateLimiter, type RateLimiter } from './rate-limit';
 const WINDOW_MS = 15 * 60 * 1000;
 
 type VerifierDeps = {
+  byEmail?: RateLimiter;
   byEmailAndIp?: RateLimiter;
   byIp?: RateLimiter;
   verifyPassword?: (hashed: string, password: string) => Promise<boolean>;
@@ -24,6 +25,8 @@ const getDummyHash = () => (dummyHash ??= hash(randomUUID()));
  * Toda falha retorna `invalid`, sem dizer se o e-mail existe ou se o usuário está bloqueado.
  */
 export function createCredentialsVerifier(db: AppDatabase, deps: VerifierDeps = {}) {
+  // Por e-mail (qualquer IP): barra força bruta numa conta mesmo com IPs rotativos.
+  const byEmail = deps.byEmail ?? createRateLimiter({ limit: 10, windowMs: WINDOW_MS });
   const byEmailAndIp = deps.byEmailAndIp ?? createRateLimiter({ limit: 5, windowMs: WINDOW_MS });
   const byIp = deps.byIp ?? createRateLimiter({ limit: 20, windowMs: WINDOW_MS });
   const verifyPassword = deps.verifyPassword ?? verify;
@@ -31,7 +34,8 @@ export function createCredentialsVerifier(db: AppDatabase, deps: VerifierDeps = 
   return async function verifyCredentials(input: LoginInput, ip: string): Promise<LoginResult> {
     const email = normalizeEmail(input.email);
     const emailKey = `${email}|${ip}`;
-    if (!byIp.hit(ip).allowed || !byEmailAndIp.hit(emailKey).allowed) {
+    const limited = [byIp.hit(ip), byEmail.hit(email), byEmailAndIp.hit(emailKey)];
+    if (limited.some((result) => !result.allowed)) {
       return { ok: false, reason: 'rate_limited' };
     }
 
@@ -42,6 +46,7 @@ export function createCredentialsVerifier(db: AppDatabase, deps: VerifierDeps = 
     );
     if (!user || !matches || user.status !== 'active') return { ok: false, reason: 'invalid' };
 
+    byEmail.reset(email);
     byEmailAndIp.reset(emailKey);
     const { id, name, role, sessionVersion } = user;
     return { ok: true, user: { id, name, email: user.email, role, sessionVersion } };

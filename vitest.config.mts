@@ -6,6 +6,8 @@ export default defineConfig({
   resolve: { tsconfigPaths: true },
   test: {
     css: false,
+    // next-auth importa `next/server` sem extensão; o Vite resolve ao processar inline.
+    server: { deps: { inline: ['next-auth'] } },
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,tsx}'],
