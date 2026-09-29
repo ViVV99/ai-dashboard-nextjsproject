@@ -55,7 +55,7 @@ describe('createCredentialsVerifier', () => {
 
     expect(result).toEqual({ ok: false, reason: 'invalid' });
     expect(verifyPassword).toHaveBeenCalledOnce();
-    expect(verifyPassword.mock.calls[0][0]).toMatch(/^\$argon2id\$/);
+    expect(verifyPassword.mock.calls[0]?.[0]).toMatch(/^\$argon2id\$/);
   });
 
   it('usuário bloqueado com senha certa → invalid', async () => {
