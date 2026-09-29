@@ -151,7 +151,8 @@ export const pageViews = sqliteTable(
   },
   (t) => [
     check('page_views_source_check', oneOf(t.source, TRAFFIC_SOURCES)),
-    index('page_views_created_at_idx').on(t.createdAt),
+    // Cobertura: filtro por período + visitantes únicos sem ler a tabela (visão geral, F4).
+    index('page_views_created_at_session_idx').on(t.createdAt, t.sessionId),
     index('page_views_source_idx').on(t.source),
   ],
 );

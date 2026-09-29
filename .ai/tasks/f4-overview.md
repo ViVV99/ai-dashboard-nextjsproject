@@ -26,6 +26,8 @@ exige sessão (`requireUser`) e usa `getDb()` — a mesma que a API da F8 vai re
 3. Pedidos cancelados/reembolsados não entram em receita, pedidos nem ticket.
 4. Visitante que aparece nos dois períodos conta uma vez em cada (DISTINCT por período).
 5. Consulta de 366 dias sobre ~480 mil acessos responde em tempo aceitável (< 300 ms).
+   **Decisão (medida):** 30 dias ≈ 55 ms; 366 dias ≈ 390 ms (1ª consulta ≈ 0,8 s, era 2,3 s) com
+   índice `(created_at, session_id)` + `cache_size` 64 MB. Abaixo disso só com pré-agregação diária.
 
 ---
 
