@@ -15,6 +15,8 @@ Plano: [F2](../tasks/f2-auth.md)
 | `src/server/auth/errors.ts`      | `AuthError` e `authErrorResponse` (`{ error: { code, message } }`)  |
 | `src/server/auth/routing.ts`     | `routeDecision`: regra pura de redirects do proxy                   |
 | `src/server/auth/config.ts`      | Auth.js (Credentials + JWT) — só fiação                             |
+| `src/server/auth/env.ts`         | `assertAuthEnv`: exige `AUTH_SECRET` com ≥ 32 caracteres            |
+| `src/instrumentation.ts`         | `register()` valida o ambiente na subida do servidor (não no build) |
 | `src/server/auth/index.ts`       | `requireUser`, `requireRole`, `requirePageUser`                     |
 | `src/server/db/index.ts`         | `getDb()`: conexão única por processo                               |
 | `src/proxy.ts`                   | Checagem otimista de rotas (usa `auth` como wrapper)                |
@@ -28,6 +30,9 @@ Plano: [F2](../tasks/f2-auth.md)
    (contra um hash fictício se o e-mail não existe). Qualquer falha vira a mesma mensagem.
 4. Em sucesso, o JWT recebe `sub`, `role` e `sessionVersion`, e o usuário é redirecionado
    para o `callbackUrl` (só caminhos internos, ver `safeCallbackUrl`).
+5. A action usa `signIn(..., { redirect: false })` e faz o `redirect` ela mesma. Se o Auth.js
+   devolver uma URL de `/api/auth/*` (falha de configuração, ex.: `AUTH_SECRET` ausente), a
+   action mostra "Não foi possível entrar agora" em vez de navegar para a rota de API (404).
 
 ## Revogação da sessão
 
@@ -43,7 +48,7 @@ Plano: [F2](../tasks/f2-auth.md)
 
 | Variável          | Uso                                                            |
 | ----------------- | -------------------------------------------------------------- |
-| `AUTH_SECRET`     | Segredo do JWT. Obrigatório. `openssl rand -base64 32`         |
+| `AUTH_SECRET`     | Segredo do JWT. Obrigatório, ≥ 32 chars (validado na subida)   |
 | `AUTH_TRUST_HOST` | `true` fora da Vercel. Exige proxy reverso confiável na frente |
 | `DATABASE_URL`    | Mesmo banco do seed (padrão `./data/app.db`)                   |
 
