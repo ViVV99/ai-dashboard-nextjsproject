@@ -6,6 +6,7 @@ com gráficos de vendas, compras e acessos.
 ## Arquitetura
 
 - [Visão geral da arquitetura](./architeture/overview.md)
+- [Autenticação e autorização](./architeture/autenticacao.md)
 
 ## Contexto
 
@@ -30,3 +31,5 @@ com gráficos de vendas, compras e acessos.
 ## Tasks
 
 - [Backlog do MVP (F0–F9)](./tasks/backlog.md)
+- [F1 — Banco + seed: plano de implementação](./tasks/f1-banco-seed.md)
+- [F2 — Autenticação e perfis: plano de implementação](./tasks/f2-auth.md)

@@ -1,13 +1,14 @@
 # Rotas e endpoints
 
-Status: **planejado** (nenhuma rota implementada ainda). Atualizar ao implementar.
+Status: implementadas `/login`, `/` (provisória até a F3) e `/api/auth/*`; as demais estão **planejadas**.
+Atualizar ao implementar. Autenticação: [detalhes](../architeture/autenticacao.md)
 Permissões: [usuários e perfis](../domains/usuarios-e-perfis.md)
 
 ## Páginas
 
 | Rota               | Acesso        | Descrição                                    |
 | ------------------ | ------------- | -------------------------------------------- |
-| `/login`           | público       | Login (RHF + Zod)                            |
+| `/login`           | público       | Login (RHF + Zod); logado → redireciona `/`  |
 | `/`                | viewer, admin | Visão geral (KPIs)                           |
 | `/vendas`          | viewer, admin | Gráficos de vendas                           |
 | `/compras`         | viewer, admin | Gráficos de compras e margem                 |

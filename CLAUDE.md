@@ -51,4 +51,7 @@ yarn test:coverage   # Vitest com cobertura (v8)
 yarn lint            # ESLint
 yarn typecheck       # next typegen + tsc --noEmit
 yarn format          # Prettier (write) · yarn format:check para CI
+yarn db:generate     # gera migration a partir do schema (drizzle-kit)
+yarn db:migrate      # aplica migrations em DATABASE_URL
+yarn db:seed         # APAGA e recria dados fictícios (variáveis em .env.example)
 ```

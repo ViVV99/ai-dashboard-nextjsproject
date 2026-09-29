@@ -9,8 +9,8 @@ Referências: [arquitetura](../architeture/overview.md) · [rotas](../context/ro
 | #   | Feature                             | Depende de | Status |
 | --- | ----------------------------------- | ---------- | ------ |
 | F0  | Fundação do projeto                 | —          | ✅     |
-| F1  | Banco + seed                        | F0         | ⬜     |
-| F2  | Autenticação e perfis               | F1         | ⬜     |
+| F1  | Banco + seed                        | F0         | ✅     |
+| F2  | Autenticação e perfis               | F1         | ✅     |
 | F3  | Layout e filtro de período          | F2         | ⬜     |
 | F4  | Visão geral (KPIs)                  | F3         | ⬜     |
 | F5  | Vendas                              | F3         | ⬜     |
@@ -26,13 +26,13 @@ Referências: [arquitetura](../architeture/overview.md) · [rotas](../context/ro
 - Next.js (App Router) + TS strict, MUI com tema claro e escuro, Vitest + Testing Library, ESLint, Prettier.
 - `yarn build`, `yarn lint` e `yarn test:run` passam sem erros.
 
-### F1 — Banco + seed
+### F1 — Banco + seed ([plano](./f1-banco-seed.md))
 
 - Schema Drizzle com todas as tabelas de [schema](../domains/schema.md), com migrations.
 - `yarn db:seed` gera cerca de 12 meses de dados de forma determinística e cria o admin a partir de variáveis de ambiente.
 - Testes: o seed é reprodutível; as constraints (CHECK, UNIQUE) funcionam.
 
-### F2 — Autenticação e perfis
+### F2 — Autenticação e perfis ([plano](./f2-auth.md))
 
 - Login com e-mail e senha; argon2id; rate limit (e-mail+IP e por IP); mensagem de erro genérica;
   tempo de resposta constante (hash fictício para e-mail inexistente).

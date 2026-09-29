@@ -32,7 +32,10 @@ Complementa as convenções críticas do `CLAUDE.md`.
 
 ## Testes (Vitest)
 
-- Services e regras de negócio: testes unitários com SQLite em memória + seed fixa.
+- Services e regras de negócio: testes com SQLite `:memory:` migrado
+  (`createDatabase(':memory:')` + `migrateDatabase`) e seed fixa.
+- Vitest tem dois projetos: `node` (`src/server/**`) e `dom` (jsdom, o resto).
+- Constraints do banco são testadas com SQL cru (`db.$client`), fora da camada tipada.
 - Componentes: Testing Library (comportamento, não implementação).
 - Todo bug fix vem com um teste de regressão.
 - Testes ficam colocalizados em `src/` (`*.test.ts(x)`); é o único local lido pelo Vitest.
@@ -51,3 +54,9 @@ Complementa as convenções críticas do `CLAUDE.md`.
 - `AppRouterCacheProvider` vem de `@mui/material-nextjs/v16-appRouter`.
 - O tema declara `CssThemeVariables { enabled: true }` (module augmentation) para tipar
   `theme.vars` e `theme.colorSchemes`.
+
+## Commits feitos por agentes
+
+- Hook do Claude Code (`.claude/settings.json` → `.claude/hooks/pre-commit-check.sh`) roda
+  `yarn lint` e `yarn test:run` antes de qualquer `git commit`; se falharem, o commit é bloqueado.
+- Vale só para commits feitos pelo agente, não para `git commit` no terminal.

@@ -4,7 +4,7 @@ Aplicação **Next.js (App Router)** full-stack: UI, API REST e acesso ao banco 
 mesmo projeto. Banco **SQLite** local via **Drizzle ORM + better-sqlite3**.
 
 Decisões de stack: [0001](../decisions/0001-stack.md) ·
-Auth: [0002](../decisions/0002-auth-e-perfis.md)
+Auth: [0002](../decisions/0002-auth-e-perfis.md) · [autenticação (implementação)](./autenticacao.md)
 
 ## Camadas
 
@@ -28,7 +28,7 @@ Browser (MUI + MUI X Charts)
   cada service/action/handler (defesa em profundidade). O proxy sozinho não basta.
   No Next 16, `middleware.ts` foi renomeado para `proxy.ts` e roda em Node.js.
 
-## Estrutura de pastas (planejada)
+## Estrutura de pastas
 
 ```
 src/
@@ -46,13 +46,14 @@ src/
   components/                componentes de UI reutilizáveis
   features/                  módulos por feature (charts, forms, hooks)
   server/
-    db/                      schema.ts, client.ts, migrations, seed
+    db/                      schema.ts, client.ts, seed/ (geradores puros), cli/ (migrate, seed)
     services/                metrics, users, audit
     auth/                    config Auth.js, guards (requireRole)
   schemas/                   schemas Zod compartilhados (client + server)
-  types/                     tipos de domínio
+  types/                     tipos de domínio (domain.ts: fonte única dos valores permitidos)
   lib/                       utilitários (datas, formatação)
 *.test.ts(x)                 testes colocalizados em src/ (único local lido pelo Vitest)
+drizzle/                     migrations SQL geradas pelo drizzle-kit (versionadas)
 ```
 
 ## Fluxo de dados das métricas
