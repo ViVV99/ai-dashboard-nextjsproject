@@ -4,7 +4,7 @@ Aplicação **Next.js (App Router)** full-stack: UI, API REST e acesso ao banco 
 mesmo projeto. Banco **SQLite** local via **Drizzle ORM + better-sqlite3**.
 
 Decisões de stack: [0001](../decisions/0001-stack.md) ·
-Auth: [0002](../decisions/0002-auth-e-perfis.md)
+Auth: [0002](../decisions/0002-auth-e-perfis.md) · [autenticação (implementação)](./autenticacao.md)
 
 ## Camadas
 

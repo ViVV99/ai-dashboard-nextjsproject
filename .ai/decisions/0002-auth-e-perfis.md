@@ -17,6 +17,8 @@ pode, como alterar o cadastro de viewers e bloqueá-los.
 4. **Bloqueio invalida sessões:** ao bloquear, `session_version` é incrementado.
    Todo request autenticado compara a versão do token com a do banco. Se divergir
    ou se o usuário estiver bloqueado, a sessão é rejeitada (401).
+   _Implementação (F2): o callback `jwt` também revalida e remove o cookie; ver
+   [autenticação](../architeture/autenticacao.md)._
 5. **Autorização em duas camadas:**
    - `src/proxy.ts` — checagem otimista: redireciona não autenticados e barra
      `/admin/*` para não-admin.
