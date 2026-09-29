@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createDatabase, migrateDatabase, type AppDatabase } from '../db/client';
 import { users } from '../db/schema';
-import { loadSessionUser } from './session';
+import { loadSessionUser, tokenClaims } from './session';
 
 let db: AppDatabase;
 
@@ -55,5 +55,19 @@ describe('loadSessionUser', () => {
       role: 'viewer',
       sessionVersion: 2,
     });
+  });
+});
+
+describe('tokenClaims', () => {
+  it('converte sub e sessionVersion em claims', () => {
+    expect(tokenClaims({ sub: '7', sessionVersion: 3 })).toEqual({ userId: 7, sessionVersion: 3 });
+  });
+
+  it.each([
+    ['sem sub', { sessionVersion: 1 }],
+    ['sub não numérico', { sub: 'abc', sessionVersion: 1 }],
+    ['sem sessionVersion', { sub: '1' }],
+  ])('%s → null', (_, token) => {
+    expect(tokenClaims(token)).toBeNull();
   });
 });

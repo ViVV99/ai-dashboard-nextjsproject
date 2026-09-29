@@ -3,6 +3,7 @@ import Credentials from 'next-auth/providers/credentials';
 import { loginSchema } from '@/schemas/auth';
 import { getDb } from '../db';
 import { createCredentialsVerifier } from './credentials';
+import { loadSessionUser, tokenClaims } from './session';
 
 /** Código exposto na URL/erro quando o rate limit do login é atingido. */
 export class RateLimitedSignin extends CredentialsSignin {
@@ -34,13 +35,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    jwt({ token, user }) {
+    // Revalida a cada leitura: bloqueio ou session_version novo → null → cookie removido.
+    async jwt({ token, user }) {
       if (user) {
-        token.sub = user.id;
-        token.role = user.role;
-        token.sessionVersion = user.sessionVersion;
+        return { ...token, sub: user.id, role: user.role, sessionVersion: user.sessionVersion };
       }
-      return token;
+      const current = await loadSessionUser(getDb(), tokenClaims(token));
+      return current ? { ...token, name: current.name, role: current.role } : null;
     },
     session({ session, token }) {
       if (token.sub && token.role && token.sessionVersion !== undefined) {
