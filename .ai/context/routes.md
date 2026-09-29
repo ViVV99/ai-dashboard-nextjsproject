@@ -1,13 +1,15 @@
 # Rotas e endpoints
 
-Status: **planejado** (nenhuma rota implementada ainda). Atualizar ao implementar.
+Status: páginas implementadas na F3 (casca + filtro; conteúdo nas F4–F9) e `/api/auth/*`;
+a API de métricas e usuários está **planejada**.
+Atualizar ao implementar. Autenticação: [detalhes](../architeture/autenticacao.md)
 Permissões: [usuários e perfis](../domains/usuarios-e-perfis.md)
 
 ## Páginas
 
 | Rota               | Acesso        | Descrição                                    |
 | ------------------ | ------------- | -------------------------------------------- |
-| `/login`           | público       | Login (RHF + Zod)                            |
+| `/login`           | público       | Login (RHF + Zod); logado → redireciona `/`  |
 | `/`                | viewer, admin | Visão geral (KPIs)                           |
 | `/vendas`          | viewer, admin | Gráficos de vendas                           |
 | `/compras`         | viewer, admin | Gráficos de compras e margem                 |
@@ -16,7 +18,10 @@ Permissões: [usuários e perfis](../domains/usuarios-e-perfis.md)
 | `/admin/usuarios`  | admin         | Lista, criação, edição e bloqueio de viewers |
 | `/admin/auditoria` | admin         | Log de ações administrativas                 |
 
-Páginas de dashboard aceitam `?from=YYYY-MM-DD&to=YYYY-MM-DD` (padrão: últimos 30 dias).
+Páginas de métricas (`/`, `/vendas`, `/compras`, `/acessos`) aceitam `?from=YYYY-MM-DD&to=YYYY-MM-DD`
+(padrão: últimos 30 dias). Período inválido na página → usa o padrão e mostra um aviso
+(`resolvePeriod` em `src/schemas/period.ts`). Páginas `/admin/*` usam `requirePageRole('admin')`:
+viewer é redirecionado para `/`.
 
 ## API REST
 

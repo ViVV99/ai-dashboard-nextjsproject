@@ -4,3 +4,5 @@ coverage
 yarn.lock
 .agents
 .devcontainer
+drizzle
+.superpowers
