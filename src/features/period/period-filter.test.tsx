@@ -60,6 +60,17 @@ describe('PeriodFilter', () => {
     expect(push).not.toHaveBeenCalled();
   });
 
+  // Regressão: com URL inválida nenhum preset fica marcado, então clicar em "30 dias" navega.
+  it('com período inválido, nenhum preset fica marcado e o clique corrige a URL', async () => {
+    render(<PeriodFilter period={period} invalid />);
+    const button = screen.getByRole('button', { name: '30 dias' });
+    expect(button).toHaveAttribute('aria-pressed', 'false');
+
+    await userEvent.setup().click(button);
+
+    expect(push).toHaveBeenCalledWith('/vendas?aba=top&from=2026-08-31&to=2026-09-29');
+  });
+
   it('avisa quando o período da URL era inválido', () => {
     render(<PeriodFilter period={period} invalid />);
 

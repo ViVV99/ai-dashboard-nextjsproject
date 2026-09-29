@@ -25,6 +25,15 @@ describe('periodSchema', () => {
     expect(result.error?.issues[0]?.path).toEqual(['to']);
   });
 
+  // Regressão: os refines de ordem/tamanho não devem acusar o campo válido quando o outro é inválido.
+  it.each([[{ from: '', to: '2026-01-31' }], [{ from: '2026-02-30', to: '2026-01-01' }]])(
+    'data inválida gera só o erro do próprio campo: %o',
+    (input) => {
+      const result = periodSchema.safeParse(input);
+      expect(result.error?.issues.map((issue) => issue.path)).toEqual([['from']]);
+    },
+  );
+
   it('rejeita data inexistente em vez de normalizar', () => {
     expect(periodSchema.safeParse({ from: '2026-02-30', to: '2026-03-10' }).success).toBe(false);
   });

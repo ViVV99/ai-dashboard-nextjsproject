@@ -50,7 +50,8 @@ export function PeriodFilter({ period, invalid }: PeriodFilterProps) {
         <ToggleButtonGroup
           size="small"
           exclusive
-          value={activePresetId(period)}
+          // Com URL inválida nenhum preset fica marcado: clicar em qualquer um corrige a URL.
+          value={invalid ? null : activePresetId(period)}
           onChange={onPreset}
           aria-label="Atalhos de período"
         >

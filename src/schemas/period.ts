@@ -7,17 +7,27 @@ export const MAX_PERIOD_DAYS = 366;
 
 const isoDate = z.string().refine(isValidIsoDate, 'Informe uma data válida.');
 
+// Os refines do objeto rodam mesmo com campo inválido (Zod 4): só comparam datas válidas,
+// para não acusar o campo correto.
+const bothValid = ({ from, to }: Period) => isValidIsoDate(from) && isValidIsoDate(to);
+
 /** Período do filtro. Ver .ai/domains/metricas.md. */
 export const periodSchema = z
   .object({ from: isoDate, to: isoDate })
-  .refine(({ from, to }) => from <= to, {
+  .refine((value) => !bothValid(value) || value.from <= value.to, {
     path: ['to'],
     message: 'A data final deve ser igual ou posterior à inicial.',
   })
-  .refine(({ from, to }) => from > to || daysBetween(from, to) <= MAX_PERIOD_DAYS, {
-    path: ['to'],
-    message: `O período pode ter no máximo ${MAX_PERIOD_DAYS} dias.`,
-  });
+  .refine(
+    (value) =>
+      !bothValid(value) ||
+      value.from > value.to ||
+      daysBetween(value.from, value.to) <= MAX_PERIOD_DAYS,
+    {
+      path: ['to'],
+      message: `O período pode ter no máximo ${MAX_PERIOD_DAYS} dias.`,
+    },
+  );
 
 export function defaultPeriod(now: Date = new Date()): Period {
   const to = todayInStore(now);
