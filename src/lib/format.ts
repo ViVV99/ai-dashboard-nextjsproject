@@ -44,3 +44,13 @@ export function formatBucket(key: string, granularity: Granularity): string {
   const dayMonth = `${day}/${month}`;
   return granularity === 'week' ? `sem. ${dayMonth}` : dayMonth;
 }
+
+const compactCurrency = new Intl.NumberFormat('pt-BR', {
+  style: 'currency',
+  currency: 'BRL',
+  notation: 'compact',
+  maximumFractionDigits: 1,
+});
+
+/** Moeda abreviada para eixos (`R$ 12,3 mil`), a partir de centavos. */
+export const formatCompactCurrency = (cents: number) => compactCurrency.format(cents / 100);

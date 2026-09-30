@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   formatCurrency,
   formatBucket,
+  formatCompactCurrency,
   formatDate,
   formatInteger,
   formatPercent,
@@ -44,5 +45,12 @@ describe('formatBucket', () => {
     ['2027-01-01', 'month', 'jan/27'],
   ] as const)('%s (%s) → %s', (key, granularity, expected) => {
     expect(formatBucket(key, granularity)).toBe(expected);
+  });
+});
+
+describe('formatCompactCurrency', () => {
+  it('abrevia a partir de centavos', () => {
+    expect(plain(formatCompactCurrency(12345_67))).toBe('R$ 12,3 mil');
+    expect(plain(formatCompactCurrency(500_00))).toBe('R$ 500');
   });
 });

@@ -9,12 +9,13 @@ import ProfilePage from './perfil/page';
 import AuditPage from './admin/auditoria/page';
 import UsersPage from './admin/usuarios/page';
 
-const { requirePageRole, loadOverview } = vi.hoisted(() => ({
+const { requirePageRole, loadOverview, loadSales } = vi.hoisted(() => ({
   requirePageRole: vi.fn(),
   loadOverview: vi.fn(),
+  loadSales: vi.fn(),
 }));
 vi.mock('@/server/auth', () => ({ requirePageRole }));
-vi.mock('@/server/services/metrics', () => ({ loadOverview }));
+vi.mock('@/server/services/metrics', () => ({ loadOverview, loadSales }));
 
 const overview = (hasData = true) => ({
   period: { from: '2026-01-01', to: '2026-01-31' },
@@ -23,6 +24,15 @@ const overview = (hasData = true) => ({
   kpis: [
     { id: 'revenue', label: 'Receita', format: 'currency', value: 100, previous: 50, variation: 1 },
   ],
+});
+const sales = (hasData = true) => ({
+  period: { from: '2026-01-01', to: '2026-01-31' },
+  granularity: 'day',
+  revenue: [{ bucket: '2026-01-01', revenueCents: hasData ? 100 : 0, orders: hasData ? 1 : 0 }],
+  topByRevenue: [],
+  topByQuantity: [],
+  byCategory: [],
+  hasData,
 });
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),
@@ -49,6 +59,7 @@ beforeEach(() => {
   vi.setSystemTime(new Date('2026-09-29T15:00:00Z'));
   requirePageRole.mockReset();
   loadOverview.mockReset().mockResolvedValue(overview());
+  loadSales.mockReset().mockResolvedValue(sales());
 });
 
 afterEach(() => {
@@ -96,6 +107,24 @@ describe('visão geral', () => {
 
     expect(screen.getByText('Nenhuma venda paga ou acesso neste período.')).toBeInTheDocument();
     expect(screen.getByRole('article', { name: 'Receita' })).toBeInTheDocument();
+  });
+});
+
+describe('vendas', () => {
+  it('carrega as vendas do período resolvido e mostra os três gráficos', async () => {
+    await renderPage(SalesPage as MetricsPage, { from: '2026-01-01', to: '2026-01-31' });
+
+    expect(loadSales).toHaveBeenCalledWith({ from: '2026-01-01', to: '2026-01-31' });
+    for (const name of ['Receita ao longo do tempo', 'Top 10 produtos', 'Receita por categoria']) {
+      expect(screen.getByRole('region', { name })).toBeInTheDocument();
+    }
+  });
+
+  it('período sem vendas mostra aviso', async () => {
+    loadSales.mockResolvedValue(sales(false));
+    await renderPage(SalesPage as MetricsPage);
+
+    expect(screen.getByText('Nenhuma venda paga neste período.')).toBeInTheDocument();
   });
 });
 
