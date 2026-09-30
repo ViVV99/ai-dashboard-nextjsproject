@@ -18,7 +18,11 @@ export function createDatabase(url: string): AppDatabase {
 
   const sqlite = new Database(url);
   sqlite.pragma('foreign_keys = ON');
-  if (!inMemory) sqlite.pragma('journal_mode = WAL');
+  if (!inMemory) {
+    sqlite.pragma('journal_mode = WAL');
+    // 64 MB de cache de páginas: sem isso, agregações longas releem o disco a cada consulta.
+    sqlite.pragma('cache_size = -65536');
+  }
 
   return drizzle({ client: sqlite, schema });
 }

@@ -34,3 +34,4 @@ com gráficos de vendas, compras e acessos.
 - [F1 — Banco + seed: plano de implementação](./tasks/f1-banco-seed.md)
 - [F2 — Autenticação e perfis: plano de implementação](./tasks/f2-auth.md)
 - [F3 — Layout e filtro de período: plano de implementação](./tasks/f3-layout.md)
+- [F4 — Visão geral (KPIs): plano de implementação](./tasks/f4-overview.md)

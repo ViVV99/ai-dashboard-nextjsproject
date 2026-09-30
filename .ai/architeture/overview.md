@@ -61,7 +61,9 @@ drizzle/                     migrations SQL geradas pelo drizzle-kit (versionada
 1. O filtro de período fica na URL (`?from=YYYY-MM-DD&to=YYYY-MM-DD`); o `PeriodFilter`
    (client) só altera a URL, preservando os outros parâmetros.
 2. A página (Server Component) lê `searchParams`, valida com `resolvePeriod` e chama o service.
-3. O service agrega no SQLite (`GROUP BY` por dia/semana/mês) e retorna séries.
+3. O service agrega no SQLite e retorna dados prontos. A página chama a fachada
+   `src/server/services/metrics` (`loadOverview`), que exige sessão e usa `getDb()`;
+   as consultas puras (`getOverviewMetrics(db, period)`) são testadas com `:memory:`.
 4. Os gráficos (Client Components) só recebem dados prontos por props.
 
 ## Segurança (resumo)

@@ -9,8 +9,21 @@ import ProfilePage from './perfil/page';
 import AuditPage from './admin/auditoria/page';
 import UsersPage from './admin/usuarios/page';
 
-const { requirePageRole } = vi.hoisted(() => ({ requirePageRole: vi.fn() }));
+const { requirePageRole, loadOverview } = vi.hoisted(() => ({
+  requirePageRole: vi.fn(),
+  loadOverview: vi.fn(),
+}));
 vi.mock('@/server/auth', () => ({ requirePageRole }));
+vi.mock('@/server/services/metrics', () => ({ loadOverview }));
+
+const overview = (hasData = true) => ({
+  period: { from: '2026-01-01', to: '2026-01-31' },
+  previousPeriod: { from: '2025-12-01', to: '2025-12-31' },
+  hasData,
+  kpis: [
+    { id: 'revenue', label: 'Receita', format: 'currency', value: 100, previous: 50, variation: 1 },
+  ],
+});
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),
   usePathname: () => '/',
@@ -35,6 +48,7 @@ beforeEach(() => {
   vi.useFakeTimers({ toFake: ['Date'] });
   vi.setSystemTime(new Date('2026-09-29T15:00:00Z'));
   requirePageRole.mockReset();
+  loadOverview.mockReset().mockResolvedValue(overview());
 });
 
 afterEach(() => {
@@ -62,6 +76,26 @@ describe.each(metricsPages)('página %s', (title, Page) => {
 
     expect(screen.getByLabelText('De')).toHaveValue('2026-08-31');
     expect(screen.getByRole('alert')).toBeInTheDocument();
+  });
+});
+
+describe('visão geral', () => {
+  it('carrega os KPIs do período resolvido e mostra o intervalo comparado', async () => {
+    await renderPage(OverviewPage as MetricsPage, { from: '2026-01-01', to: '2026-01-31' });
+
+    expect(loadOverview).toHaveBeenCalledWith({ from: '2026-01-01', to: '2026-01-31' });
+    expect(screen.getByRole('article', { name: 'Receita' })).toBeInTheDocument();
+    expect(
+      screen.getByText('01/01/2026 a 31/01/2026, comparado com 01/12/2025 a 31/12/2025.'),
+    ).toBeInTheDocument();
+  });
+
+  it('período sem movimento mostra aviso, mas mantém os cards', async () => {
+    loadOverview.mockResolvedValue(overview(false));
+    await renderPage(OverviewPage as MetricsPage);
+
+    expect(screen.getByText('Nenhuma venda paga ou acesso neste período.')).toBeInTheDocument();
+    expect(screen.getByRole('article', { name: 'Receita' })).toBeInTheDocument();
   });
 });
 
