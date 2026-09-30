@@ -18,9 +18,9 @@ function weekStart(date: string): string {
 }
 
 function nextMonth(key: string): string {
-  const [year, month] = key.split('-').map(Number);
-  const next = month === 12 ? [year + 1, 1] : [year, month + 1];
-  return `${next[0]}-${String(next[1]).padStart(2, '0')}-01`;
+  // Date.UTC normaliza o mês 12 (0-based) para janeiro do ano seguinte.
+  const next = new Date(Date.UTC(Number(key.slice(0, 4)), Number(key.slice(5, 7)), 1));
+  return next.toISOString().slice(0, 10);
 }
 
 /** Chave de cada bucket do período, em ordem (dia, segunda-feira ou dia 1 do mês). */

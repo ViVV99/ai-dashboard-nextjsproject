@@ -15,8 +15,8 @@ export function RevenueChart({ data, granularity }: RevenueChartProps) {
   const labels = data.map((point) => formatBucket(point.bucket, granularity));
   const table = {
     columns: [BUCKET_LABEL[granularity], 'Receita', 'Pedidos'],
-    rows: data.map((point, index) => [
-      labels[index],
+    rows: data.map((point) => [
+      formatBucket(point.bucket, granularity),
       formatCurrency(point.revenueCents),
       formatInteger(point.orders),
     ]),
@@ -41,6 +41,7 @@ export function RevenueChart({ data, granularity }: RevenueChartProps) {
         series={[
           {
             label: 'Receita',
+            color: 'var(--mui-palette-primary-main)',
             data: data.map((point) => point.revenueCents),
             valueFormatter: (value) => (value === null ? '—' : formatCurrency(value)),
             area: true,

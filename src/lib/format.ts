@@ -39,9 +39,9 @@ const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', '
 
 /** Rótulo curto de um bucket: `07/09`, `sem. 07/09` ou `set/26`. */
 export function formatBucket(key: string, granularity: Granularity): string {
-  const [year, month, day] = key.split('-');
-  if (granularity === 'month') return `${MONTHS[Number(month) - 1]}/${year.slice(2)}`;
-  const dayMonth = `${day}/${month}`;
+  const month = key.slice(5, 7);
+  if (granularity === 'month') return `${MONTHS[Number(month) - 1]}/${key.slice(2, 4)}`;
+  const dayMonth = `${key.slice(8, 10)}/${month}`;
   return granularity === 'week' ? `sem. ${dayMonth}` : dayMonth;
 }
 

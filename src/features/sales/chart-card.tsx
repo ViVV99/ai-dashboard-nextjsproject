@@ -66,7 +66,11 @@ export function ChartCard({ title, description, table, empty, actions, children 
       aria-describedby={`${id}-description`}
       sx={{ p: 2, display: 'flex', flexDirection: 'column', minWidth: 0 }}
     >
-      <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', mb: 1 }}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={1}
+        sx={{ justifyContent: 'space-between', alignItems: { sm: 'flex-start' }, mb: 1 }}
+      >
         <Box>
           <Typography id={`${id}-title`} variant="h6" component="h2">
             {title}

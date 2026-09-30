@@ -52,9 +52,11 @@ export function TopProductsChart({ byRevenue, byQuantity }: TopProductsChartProp
         layout="horizontal"
         hideLegend
         borderRadius={4}
+        margin={{ right: 40 }}
         yAxis={[{ scaleType: 'band', data: products.map((p) => p.name), width: 150 }]}
         xAxis={[
           {
+            tickNumber: 4,
             valueFormatter: (v: number) =>
               metric === 'revenue' ? formatCompactCurrency(v) : formatInteger(v),
           },
@@ -62,6 +64,7 @@ export function TopProductsChart({ byRevenue, byQuantity }: TopProductsChartProp
         series={[
           {
             label,
+            color: 'var(--mui-palette-primary-main)',
             data: products.map(value),
             valueFormatter: (v) => (v === null ? '—' : format(v)),
           },

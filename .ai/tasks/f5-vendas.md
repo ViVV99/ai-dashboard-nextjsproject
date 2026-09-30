@@ -39,8 +39,8 @@ puro (`getSalesMetrics(db, period)`) testado com SQLite `:memory:`; fachada `loa
 - `granularityFor(period): Granularity` · `bucketKeys(period, granularity): string[]`
 - `formatBucket(key, granularity)` — dia `dd/mm`, semana `sem. dd/mm`, mês `mmm/aa`
 
-- [ ] Testes RED: limites 31/32 e 180/181 dias; semanas atravessando mês/ano; meses; formatação
-- [ ] Implementar; commit `feat(sales): granularidade automática e buckets`
+- [x] Testes RED: limites 31/32 e 180/181 dias; semanas atravessando mês/ano; meses; formatação
+- [x] Implementar; commit `feat(sales): granularidade automática e buckets`
 
 ### Task 2: Service de vendas
 
@@ -54,9 +54,9 @@ Test `sales.test.ts`, `index.test.ts`
 - `type SalesMetrics = { period; granularity; revenue: RevenuePoint[]; topByRevenue; topByQuantity; byCategory; hasData }`
 - `getSalesMetrics(db, period)` · `loadSales(period)`
 
-- [ ] Testes RED: Review Focus 1–4; zeros preenchidos; top 10 com limite e desempate;
+- [x] Testes RED: Review Focus 1–4; zeros preenchidos; top 10 com limite e desempate;
       `loadSales` sem sessão lança 401 sem consultar o banco
-- [ ] Implementar; medir (Review Focus 5); commit `feat(sales): service de métricas de vendas`
+- [x] Implementar; medir (Review Focus 5); commit `feat(sales): service de métricas de vendas`
 
 ### Task 3: Gráficos e página
 
@@ -64,11 +64,11 @@ Test `sales.test.ts`, `index.test.ts`
 category-chart, category-colors), `src/app/(dashboard)/vendas/loading.tsx` · Modify `vendas/page.tsx` ·
 Test colocalizados + `pages.test.tsx`
 
-- [ ] Testes RED: cartão com título/descrição e estado vazio; alternância receita/quantidade;
+- [x] Testes RED: cartão com título/descrição e estado vazio; alternância receita/quantidade;
       legenda da categoria com valor e %; página chama `loadSales` com o período e mostra aviso sem dados
-- [ ] Implementar; verificação no navegador (claro e escuro, mobile); commit `feat(sales): gráficos`
+- [x] Implementar; verificação no navegador (claro e escuro, mobile); commit `feat(sales): gráficos`
 
 ### Task 4: Docs e entrega
 
-- [ ] `backlog.md` (F5 ✅), `metricas.md` (implementação), `overview.md`, decisão de paleta
-- [ ] `yarn lint`, `yarn typecheck`, `yarn test:run`, `yarn build`; commit `docs: F5`; push
+- [x] `backlog.md` (F5 ✅), `metricas.md` (implementação), `overview.md`, decisão de paleta
+- [x] `yarn lint`, `yarn typecheck`, `yarn test:run`, `yarn build`; commit `docs: F5`; push

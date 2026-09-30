@@ -119,8 +119,8 @@ describe('getSalesMetrics — agrupamento e limites', () => {
     const top = getSalesMetrics(db, period).topByRevenue;
 
     expect(top).toHaveLength(10);
-    expect(top[0].name).toBe('Item 10');
-    expect(top[9].name).toBe('Item 19');
+    expect(top[0]?.name).toBe('Item 10');
+    expect(top[9]?.name).toBe('Item 19');
   });
 
   it('sem vendas: série zerada, listas vazias e hasData falso', () => {

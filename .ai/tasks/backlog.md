@@ -13,7 +13,7 @@ Referências: [arquitetura](../architeture/overview.md) · [rotas](../context/ro
 | F2  | Autenticação e perfis               | F1         | ✅     |
 | F3  | Layout e filtro de período          | F2         | ✅     |
 | F4  | Visão geral (KPIs)                  | F3         | ✅     |
-| F5  | Vendas                              | F3         | ⬜     |
+| F5  | Vendas                              | F3         | ✅     |
 | F6  | Compras                             | F3         | ⬜     |
 | F7  | Acessos                             | F3         | ⬜     |
 | F8  | API REST de métricas                | F4–F7      | ⬜     |
@@ -51,7 +51,7 @@ Referências: [arquitetura](../architeture/overview.md) · [rotas](../context/ro
 - Cards de KPI com a variação vs. período anterior, seguindo [métricas](../domains/metricas.md).
 - Testes: fórmulas, divisão por zero, cálculo do período anterior.
 
-### F5 / F6 / F7 — Vendas, Compras, Acessos
+### F5 / F6 / F7 — Vendas ([plano](./f5-vendas.md)), Compras, Acessos
 
 - Gráficos com MUI X Charts, conforme [métricas](../domains/metricas.md).
 - Estados de carregamento, vazio e erro; granularidade automática.
