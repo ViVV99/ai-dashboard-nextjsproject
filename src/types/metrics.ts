@@ -30,3 +30,33 @@ export type OverviewMetrics = {
 
 /** Tamanho do bucket dos gráficos temporais (automático pelo tamanho do período). */
 export type Granularity = 'day' | 'week' | 'month';
+
+// Métricas de vendas (F5). Receita de produto/categoria = quantidade × preço de venda do item.
+
+export type RevenuePoint = {
+  /** Chave do bucket: dia, segunda-feira da semana ou dia 1 do mês (YYYY-MM-DD). */
+  bucket: string;
+  revenueCents: number;
+  orders: number;
+};
+
+export type ProductRank = {
+  productId: number;
+  name: string;
+  revenueCents: number;
+  quantity: number;
+};
+
+export type CategoryRevenue = { categoryId: number; name: string; revenueCents: number };
+
+export type SalesMetrics = {
+  period: Period;
+  granularity: Granularity;
+  /** Um ponto por bucket do período, com 0 onde não houve venda. */
+  revenue: RevenuePoint[];
+  topByRevenue: ProductRank[];
+  topByQuantity: ProductRank[];
+  /** Só categorias com venda, ordenadas por `categoryId` (a cor segue a categoria). */
+  byCategory: CategoryRevenue[];
+  hasData: boolean;
+};
