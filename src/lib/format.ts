@@ -1,4 +1,4 @@
-import type { KpiFormat } from '@/types/metrics';
+import type { Granularity, KpiFormat } from '@/types/metrics';
 
 // Formatação pt-BR para a UI. Valores monetários chegam em centavos.
 
@@ -33,4 +33,14 @@ export function formatKpiValue(format: KpiFormat, value: number | null) {
   if (format === 'currency') return formatCurrency(value);
   if (format === 'percent') return formatPercent(value);
   return formatInteger(value);
+}
+
+const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+
+/** Rótulo curto de um bucket: `07/09`, `sem. 07/09` ou `set/26`. */
+export function formatBucket(key: string, granularity: Granularity): string {
+  const [year, month, day] = key.split('-');
+  if (granularity === 'month') return `${MONTHS[Number(month) - 1]}/${year.slice(2)}`;
+  const dayMonth = `${day}/${month}`;
+  return granularity === 'week' ? `sem. ${dayMonth}` : dayMonth;
 }

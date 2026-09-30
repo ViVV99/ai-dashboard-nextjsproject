@@ -27,3 +27,6 @@ export type OverviewMetrics = {
   /** Há pedido pago ou acesso no período atual. */
   hasData: boolean;
 };
+
+/** Tamanho do bucket dos gráficos temporais (automático pelo tamanho do período). */
+export type Granularity = 'day' | 'week' | 'month';

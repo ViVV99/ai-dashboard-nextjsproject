@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   formatCurrency,
+  formatBucket,
   formatDate,
   formatInteger,
   formatPercent,
@@ -32,5 +33,16 @@ describe('formatação pt-BR', () => {
 
   it('data dd/mm/aaaa sem depender do fuso do servidor', () => {
     expect(formatDate('2026-09-01')).toBe('01/09/2026');
+  });
+});
+
+describe('formatBucket', () => {
+  it.each([
+    ['2026-09-07', 'day', '07/09'],
+    ['2026-09-07', 'week', 'sem. 07/09'],
+    ['2026-09-01', 'month', 'set/26'],
+    ['2027-01-01', 'month', 'jan/27'],
+  ] as const)('%s (%s) → %s', (key, granularity, expected) => {
+    expect(formatBucket(key, granularity)).toBe(expected);
   });
 });
