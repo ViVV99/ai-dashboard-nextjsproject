@@ -32,6 +32,10 @@ Definições oficiais das métricas. Todas respeitam o período filtrado
 > A conversão é uma **aproximação**: `orders` e `page_views` não estão ligados
 > por sessão, então não é possível saber quais visitantes compraram.
 
+**Implementação (F4):** `getOverviewMetrics` em `src/server/services/metrics/overview.ts`.
+Período local → intervalo UTC `[from 03:00Z, to+1 03:00Z)` (`toUtcRange`); uma varredura por
+tabela cobre atual + anterior com agregação condicional. Fórmulas em `src/lib/kpi-math.ts`.
+
 ## Vendas
 
 - Receita ao longo do tempo (linha)

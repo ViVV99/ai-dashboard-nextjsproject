@@ -12,7 +12,7 @@ Referências: [arquitetura](../architeture/overview.md) · [rotas](../context/ro
 | F1  | Banco + seed                        | F0         | ✅     |
 | F2  | Autenticação e perfis               | F1         | ✅     |
 | F3  | Layout e filtro de período          | F2         | ✅     |
-| F4  | Visão geral (KPIs)                  | F3         | ⬜     |
+| F4  | Visão geral (KPIs)                  | F3         | ✅     |
 | F5  | Vendas                              | F3         | ⬜     |
 | F6  | Compras                             | F3         | ⬜     |
 | F7  | Acessos                             | F3         | ⬜     |
@@ -46,7 +46,7 @@ Referências: [arquitetura](../architeture/overview.md) · [rotas](../context/ro
 - Filtro de período na URL, validado por Zod; o padrão é 30 dias.
 - Responsivo (menu em drawer no mobile).
 
-### F4 — Visão geral
+### F4 — Visão geral ([plano](./f4-overview.md))
 
 - Cards de KPI com a variação vs. período anterior, seguindo [métricas](../domains/metricas.md).
 - Testes: fórmulas, divisão por zero, cálculo do período anterior.

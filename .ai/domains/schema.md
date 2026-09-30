@@ -71,7 +71,8 @@ Métricas derivadas: [métricas](./metricas.md)
 ## Índices
 
 - `orders(created_at)`, `order_items(order_id)`, `order_items(product_id)`
-- `purchases(created_at)`, `page_views(created_at)`, `page_views(source)`
+- `purchases(created_at)`, `page_views(created_at, session_id)` (cobertura: período + visitantes
+  únicos sem ler a tabela), `page_views(source)`
 - `users(email)` UNIQUE
 
 Os valores permitidos nos CHECK vêm de `src/types/domain.ts` (fonte única para tipos,
@@ -81,7 +82,7 @@ banco e Zod). Mudou um valor? Rode `yarn db:generate` para criar a migration.
 
 - Schema: `src/server/db/schema.ts` · migrations geradas em `drizzle/` (versionadas).
 - `yarn db:generate` cria a migration a partir do schema; `yarn db:migrate` aplica.
-- `createDatabase` liga `foreign_keys` (desligado por padrão no SQLite) e WAL em arquivo.
+- `createDatabase` liga `foreign_keys` (desligado por padrão no SQLite), WAL e cache de 64 MB em arquivo.
 
 ## Seed (`yarn db:seed`)
 
