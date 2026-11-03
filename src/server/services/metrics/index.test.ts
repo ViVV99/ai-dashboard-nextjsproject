@@ -1,17 +1,21 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthError } from '../../auth/errors';
-import { loadOverview, loadSales } from './index';
+import { loadOverview, loadPurchases, loadSales } from './index';
 
-const { requireUser, getDb, getOverviewMetrics, getSalesMetrics } = vi.hoisted(() => ({
-  requireUser: vi.fn(),
-  getDb: vi.fn(() => 'db'),
-  getOverviewMetrics: vi.fn(() => 'métricas'),
-  getSalesMetrics: vi.fn(() => 'vendas'),
-}));
+const { requireUser, getDb, getOverviewMetrics, getSalesMetrics, getPurchasesMetrics } = vi.hoisted(
+  () => ({
+    requireUser: vi.fn(),
+    getDb: vi.fn(() => 'db'),
+    getOverviewMetrics: vi.fn(() => 'métricas'),
+    getSalesMetrics: vi.fn(() => 'vendas'),
+    getPurchasesMetrics: vi.fn(() => 'compras'),
+  }),
+);
 vi.mock('../../auth', () => ({ requireUser }));
 vi.mock('../../db', () => ({ getDb }));
 vi.mock('./overview', () => ({ getOverviewMetrics }));
 vi.mock('./sales', () => ({ getSalesMetrics }));
+vi.mock('./purchases', () => ({ getPurchasesMetrics }));
 
 const period = { from: '2026-09-01', to: '2026-09-30' };
 
@@ -48,5 +52,21 @@ describe('loadSales', () => {
 
     await expect(loadSales(period)).resolves.toBe('vendas');
     expect(getSalesMetrics).toHaveBeenCalledWith('db', period);
+  });
+});
+
+describe('loadPurchases', () => {
+  it('exige sessão antes de consultar o banco', async () => {
+    requireUser.mockRejectedValue(new AuthError('unauthorized'));
+
+    await expect(loadPurchases(period)).rejects.toMatchObject({ status: 401 });
+    expect(getPurchasesMetrics).not.toHaveBeenCalled();
+  });
+
+  it('com sessão, calcula as compras do período no banco da aplicação', async () => {
+    requireUser.mockResolvedValue({ id: 1 });
+
+    await expect(loadPurchases(period)).resolves.toBe('compras');
+    expect(getPurchasesMetrics).toHaveBeenCalledWith('db', period);
   });
 });

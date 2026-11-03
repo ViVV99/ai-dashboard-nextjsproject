@@ -60,3 +60,33 @@ export type SalesMetrics = {
   byCategory: CategoryRevenue[];
   hasData: boolean;
 };
+
+// Métricas de compras (F6). CMV = quantidade vendida × custo atual do produto.
+
+export type PurchasesPoint = {
+  /** Chave do bucket (YYYY-MM-DD), como em `RevenuePoint`. */
+  bucket: string;
+  /** Custo das compras de reposição: quantidade × custo unitário da compra. */
+  purchaseCents: number;
+  revenueCents: number;
+  /** Custo das mercadorias vendidas (pedidos pagos). */
+  cogsCents: number;
+};
+
+export type PurchasesSummary = {
+  purchaseCents: number;
+  revenueCents: number;
+  cogsCents: number;
+  /** (receita − CMV) ÷ receita; `null` sem receita. */
+  grossMargin: number | null;
+};
+
+export type PurchasesMetrics = {
+  period: Period;
+  granularity: Granularity;
+  /** Um ponto por bucket do período, com 0 onde não houve compra nem venda. */
+  series: PurchasesPoint[];
+  summary: PurchasesSummary;
+  /** Há compra ou venda paga no período. */
+  hasData: boolean;
+};
