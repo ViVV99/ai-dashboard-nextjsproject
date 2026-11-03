@@ -2,19 +2,22 @@
 
 import { LineChart } from '@mui/x-charts/LineChart';
 import { lineClasses } from '@mui/x-charts/LineChart';
-import { formatBucket, formatCompactCurrency, formatCurrency, formatInteger } from '@/lib/format';
+import {
+  formatBucket,
+  formatCompactCurrency,
+  formatCurrency,
+  formatInteger,
+  GRANULARITY_TEXT,
+} from '@/lib/format';
 import type { Granularity, RevenuePoint } from '@/types/metrics';
-import { ChartCard } from './chart-card';
-
-const PER: Record<Granularity, string> = { day: 'dia', week: 'semana', month: 'mês' };
-const BUCKET_LABEL: Record<Granularity, string> = { day: 'Dia', week: 'Semana', month: 'Mês' };
+import { ChartCard } from '@/components/chart-card';
 
 type RevenueChartProps = { data: RevenuePoint[]; granularity: Granularity };
 
 export function RevenueChart({ data, granularity }: RevenueChartProps) {
   const labels = data.map((point) => formatBucket(point.bucket, granularity));
   const table = {
-    columns: [BUCKET_LABEL[granularity], 'Receita', 'Pedidos'],
+    columns: [GRANULARITY_TEXT[granularity].label, 'Receita', 'Pedidos'],
     rows: data.map((point) => [
       formatBucket(point.bucket, granularity),
       formatCurrency(point.revenueCents),
@@ -25,7 +28,7 @@ export function RevenueChart({ data, granularity }: RevenueChartProps) {
   return (
     <ChartCard
       title="Receita ao longo do tempo"
-      description={`Receita de pedidos pagos por ${PER[granularity]}.`}
+      description={`Receita de pedidos pagos por ${GRANULARITY_TEXT[granularity].per}.`}
       table={table}
       empty={
         data.every((point) => point.revenueCents === 0)

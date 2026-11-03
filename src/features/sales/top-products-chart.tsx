@@ -6,7 +6,7 @@ import { BarChart } from '@mui/x-charts/BarChart';
 import { useState } from 'react';
 import { formatCompactCurrency, formatCurrency, formatInteger } from '@/lib/format';
 import type { ProductRank } from '@/types/metrics';
-import { ChartCard } from './chart-card';
+import { ChartCard } from '@/components/chart-card';
 
 type Metric = 'revenue' | 'quantity';
 

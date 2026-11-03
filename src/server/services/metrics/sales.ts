@@ -1,5 +1,5 @@
-import { and, eq, gte, lt, sql, type SQL } from 'drizzle-orm';
-import { bucketKeys, granularityFor } from '@/lib/granularity';
+import { and, eq, gte, lt, sql } from 'drizzle-orm';
+import { granularityFor } from '@/lib/granularity';
 import { toUtcRange } from '@/lib/period';
 import type {
   CategoryRevenue,
@@ -11,27 +11,21 @@ import type {
 import type { Period } from '@/types/period';
 import type { AppDatabase } from '../../db/client';
 import { categories, orderItems, orders, products } from '../../db/schema';
+import { bucketKey, fillBuckets } from './buckets';
 
 const TOP_LIMIT = 10;
 
-// Chave do bucket no fuso da loja (UTC-3 fixo, ver src/lib/dates.ts): dia local,
-// segunda-feira da semana ('weekday 0' avança ao domingo; −6 dias volta à segunda) ou dia 1.
-const BUCKET_KEY: Record<Granularity, SQL> = {
-  day: sql`date(${orders.createdAt}, '-3 hours')`,
-  week: sql`date(${orders.createdAt}, '-3 hours', 'weekday 0', '-6 days')`,
-  month: sql`date(${orders.createdAt}, '-3 hours', 'start of month')`,
-};
-
-function paidInPeriod(period: Period) {
+/** Pedidos pagos no período local (reusado pelo CMV de compras). */
+export function paidInPeriod(period: Period) {
   const { start, end } = toUtcRange(period);
   return and(eq(orders.status, 'paid'), gte(orders.createdAt, start), lt(orders.createdAt, end));
 }
 
 function revenueSeries(db: AppDatabase, period: Period, granularity: Granularity) {
-  const bucket = BUCKET_KEY[granularity];
+  const bucket = bucketKey(orders.createdAt, granularity);
   const rows = db
     .select({
-      bucket: sql<string>`${bucket}`,
+      bucket,
       revenueCents: sql<number>`sum(${orders.totalCents})`,
       orders: sql<number>`count(*)`,
     })
@@ -39,10 +33,11 @@ function revenueSeries(db: AppDatabase, period: Period, granularity: Granularity
     .where(paidInPeriod(period))
     .groupBy(bucket)
     .all();
-  const byBucket = new Map(rows.map((row) => [row.bucket, row]));
-  return bucketKeys(period, granularity).map(
-    (key): RevenuePoint => byBucket.get(key) ?? { bucket: key, revenueCents: 0, orders: 0 },
-  );
+  return fillBuckets<RevenuePoint>(period, granularity, rows, (key) => ({
+    bucket: key,
+    revenueCents: 0,
+    orders: 0,
+  }));
 }
 
 type ProductSales = ProductRank & { categoryId: number; categoryName: string };

@@ -10,13 +10,13 @@ a mesma estrutura, então a moldura, as cores e a acessibilidade precisam de um 
 
 ## Decisão
 
-- **Moldura comum** `ChartCard` (`src/features/sales/chart-card.tsx`): região nomeada pelo título,
+- **Moldura comum** `ChartCard` (`src/components/chart-card.tsx`): região nomeada pelo título,
   descrição, ações (ex.: alternância), estado vazio e a **tabela equivalente** em `<details>`
   ("Ver dados em tabela"). A tabela é o texto do gráfico para leitores de tela e leitura exata.
 - **Série única** usa a cor primária do tema e não tem legenda (o título a nomeia).
 - **Categorias** usam a paleta categórica de 8 cores da skill dataviz, validada com
   `validate_palette.js` nas superfícies do tema (claro `#ffffff`, escuro `#111827`), com passos
-  próprios no escuro via variáveis CSS (`category-colors.ts`). A cor segue o `categoryId`,
+  próprios no escuro via variáveis CSS (`src/components/chart-colors.ts`). A cor segue o `categoryId`,
   nunca o ranking, para não repintar ao mudar o filtro.
 - No claro, 3 cores ficam abaixo de 3:1 contra o fundo: por isso a legenda da rosca traz nome,
   valor e % em texto, além da tabela.
@@ -24,5 +24,8 @@ a mesma estrutura, então a moldura, as cores e a acessibilidade precisam de um 
 
 ## Consequências
 
-- F6/F7 reusam `ChartCard` (mover para `src/components/` quando o 2º uso chegar).
+- F6 moveu `ChartCard` e a paleta para `src/components/`; F7 reusa os dois.
+- Séries fixas com mais de uma medida na mesma unidade (ex.: receita × CMV, F6) usam os primeiros
+  slots da paleta (`paletteColor`), com legenda própria; o par 0/1 passa no validador nos dois modos.
+  Eixo de valores monetários comparados começa em 0.
 - Mais de 8 categorias exigiria agrupar em "Outras" — hoje o seed tem 6.

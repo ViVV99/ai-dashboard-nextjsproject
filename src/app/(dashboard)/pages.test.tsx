@@ -9,13 +9,14 @@ import ProfilePage from './perfil/page';
 import AuditPage from './admin/auditoria/page';
 import UsersPage from './admin/usuarios/page';
 
-const { requirePageRole, loadOverview, loadSales } = vi.hoisted(() => ({
+const { requirePageRole, loadOverview, loadSales, loadPurchases } = vi.hoisted(() => ({
   requirePageRole: vi.fn(),
   loadOverview: vi.fn(),
   loadSales: vi.fn(),
+  loadPurchases: vi.fn(),
 }));
 vi.mock('@/server/auth', () => ({ requirePageRole }));
-vi.mock('@/server/services/metrics', () => ({ loadOverview, loadSales }));
+vi.mock('@/server/services/metrics', () => ({ loadOverview, loadSales, loadPurchases }));
 
 const overview = (hasData = true) => ({
   period: { from: '2026-01-01', to: '2026-01-31' },
@@ -32,6 +33,13 @@ const sales = (hasData = true) => ({
   topByRevenue: [],
   topByQuantity: [],
   byCategory: [],
+  hasData,
+});
+const purchases = (hasData = true) => ({
+  period: { from: '2026-01-01', to: '2026-01-31' },
+  granularity: 'day',
+  series: [{ bucket: '2026-01-01', purchaseCents: 0, revenueCents: 0, cogsCents: 0 }],
+  summary: { purchaseCents: 0, revenueCents: 0, cogsCents: 0, grossMargin: null },
   hasData,
 });
 vi.mock('next/navigation', () => ({
@@ -60,6 +68,7 @@ beforeEach(() => {
   requirePageRole.mockReset();
   loadOverview.mockReset().mockResolvedValue(overview());
   loadSales.mockReset().mockResolvedValue(sales());
+  loadPurchases.mockReset().mockResolvedValue(purchases());
 });
 
 afterEach(() => {
@@ -125,6 +134,25 @@ describe('vendas', () => {
     await renderPage(SalesPage as MetricsPage);
 
     expect(screen.getByText('Nenhuma venda paga neste período.')).toBeInTheDocument();
+  });
+});
+
+describe('compras', () => {
+  it('carrega as compras do período resolvido e mostra resumo e gráficos', async () => {
+    await renderPage(PurchasesPage as MetricsPage, { from: '2026-01-01', to: '2026-01-31' });
+
+    expect(loadPurchases).toHaveBeenCalledWith({ from: '2026-01-01', to: '2026-01-31' });
+    expect(screen.getByRole('article', { name: 'Margem bruta' })).toBeInTheDocument();
+    for (const name of ['Custo de compras', 'Receita × CMV']) {
+      expect(screen.getByRole('region', { name })).toBeInTheDocument();
+    }
+  });
+
+  it('período sem compras nem vendas mostra aviso', async () => {
+    loadPurchases.mockResolvedValue(purchases(false));
+    await renderPage(PurchasesPage as MetricsPage);
+
+    expect(screen.getByText('Nenhuma compra ou venda paga neste período.')).toBeInTheDocument();
   });
 });
 

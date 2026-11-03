@@ -43,9 +43,10 @@ src/
       auth/[...nextauth]/
       metrics/{overview,sales,purchases,access}/
       users/
-  components/                componentes de UI reutilizáveis (PageHeader, ComingSoon)
+  components/                componentes de UI reutilizáveis (PageHeader, ComingSoon, ChartCard,
+                             chart-colors: paleta categórica validada)
   features/                  módulos por feature: layout/ (AppShell, menu), period/ (filtro), auth/,
-                             overview/ (KPIs), sales/ (gráficos de vendas, ChartCard)
+                             overview/ (KPIs), sales/ (gráficos de vendas), purchases/ (compras e margem)
   server/
     db/                      schema.ts, client.ts, seed/ (geradores puros), cli/ (migrate, seed)
     services/                metrics, users, audit
@@ -63,8 +64,9 @@ drizzle/                     migrations SQL geradas pelo drizzle-kit (versionada
    (client) só altera a URL, preservando os outros parâmetros.
 2. A página (Server Component) lê `searchParams`, valida com `resolvePeriod` e chama o service.
 3. O service agrega no SQLite e retorna dados prontos. A página chama a fachada
-   `src/server/services/metrics` (`loadOverview`, `loadSales`), que exige sessão e usa `getDb()`;
-   as consultas puras (`getOverviewMetrics(db, period)`) são testadas com `:memory:`.
+   `src/server/services/metrics` (`loadOverview`, `loadSales`, `loadPurchases`), que exige sessão e usa `getDb()`;
+   as consultas puras (`getOverviewMetrics(db, period)`) são testadas com `:memory:`. Buckets
+   temporais no fuso da loja vêm de `metrics/buckets.ts` (`bucketKey`, `fillBuckets`).
 4. Os gráficos (Client Components) só recebem dados prontos por props.
 
 ## Segurança (resumo)

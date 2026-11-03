@@ -1,5 +1,6 @@
 // Paleta categórica (skill dataviz, validada com validate_palette.js nas superfícies do tema:
-// claro #ffffff, escuro #111827). A cor segue a categoria (ordem do id), nunca o ranking.
+// claro #ffffff, escuro #111827). Categorias: a cor segue o id, nunca o ranking.
+// Séries fixas (ex.: receita × CMV) usam os primeiros slots, na ordem.
 // No claro, 3 slots ficam abaixo de 3:1: por isso a legenda traz valores e há tabela.
 
 const LIGHT = [
@@ -23,10 +24,11 @@ const DARK = [
   '#e66767',
 ];
 
-const slot = (categoryId: number) => (categoryId - 1) % LIGHT.length;
+/** Variável CSS do slot da paleta, na ordem fixa (resolvida no tema claro ou escuro). */
+export const paletteColor = (slot: number) => `var(--category-${slot % LIGHT.length})`;
 
-/** Variável CSS da cor da categoria (resolvida no tema claro ou escuro). */
-export const categoryColor = (categoryId: number) => `var(--category-${slot(categoryId)})`;
+/** Cor da categoria: segue o id (slot = id − 1), nunca o ranking. */
+export const categoryColor = (categoryId: number) => paletteColor(categoryId - 1);
 
 const vars = (palette: string[]) =>
   Object.fromEntries(palette.map((color, index) => [`--category-${index}`, color]));
