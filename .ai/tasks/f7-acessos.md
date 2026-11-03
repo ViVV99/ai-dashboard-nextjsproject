@@ -44,8 +44,8 @@ mais vistas e acessos por origem.
 **Produces:** `SeriesLegend({ series: { id: string; label: string; color: string }[] })` — `ul`
 "Legenda" com amostra de linha (`aria-hidden`) e rótulo em texto
 
-- [ ] Testes RED: lista "Legenda" com um item por série, na ordem
-- [ ] Implementar; `revenue-cogs-chart.test.tsx` continua verde; commit
+- [x] Testes RED: lista "Legenda" com um item por série, na ordem
+- [x] Implementar; `revenue-cogs-chart.test.tsx` continua verde; commit
       `refactor(charts): legenda de séries compartilhada`
 
 ### Task 2: Service de acessos
@@ -60,9 +60,9 @@ mais vistas e acessos por origem.
 - `type AccessMetrics = { period; granularity; traffic: TrafficPoint[]; topPages: PageRank[]; bySource: SourceViews[]; hasData }`
 - `getAccessMetrics(db, period)` · `loadAccess(period)`
 
-- [ ] Testes RED: Review Focus 1–4; top 10 com limite e desempate; origens ordenadas com zeros;
+- [x] Testes RED: Review Focus 1–4; top 10 com limite e desempate; origens ordenadas com zeros;
       `loadAccess` sem sessão lança 401 sem consultar o banco
-- [ ] Implementar; medir (Review Focus 5); commit `feat(access): service de métricas de acessos`
+- [x] Implementar; medir (Review Focus 5); commit `feat(access): service de métricas de acessos`
 
 ### Task 3: Gráficos e página
 
@@ -70,13 +70,13 @@ mais vistas e acessos por origem.
 source-labels), `src/app/(dashboard)/acessos/loading.tsx` (+ test) · Modify `acessos/page.tsx` ·
 Test colocalizados + `pages.test.tsx`
 
-- [ ] Testes RED: tráfego com legenda das 2 séries, tabela por bucket e estado vazio; top páginas
+- [x] Testes RED: tráfego com legenda das 2 séries, tabela por bucket e estado vazio; top páginas
       com rótulo e caminho na tabela e estado vazio; origens com rótulo pt-BR, acessos e
       participação (%) na tabela; página chama `loadAccess` com o período e mostra aviso sem dados
-- [ ] Implementar; verificação no navegador (claro e escuro, mobile, vazio); commit
+- [x] Implementar; verificação no navegador (claro e escuro, mobile, vazio); commit
       `feat(access): gráficos`
 
 ### Task 4: Docs e entrega
 
-- [ ] `backlog.md` (F7 ✅), `metricas.md` (implementação), `0004`, `overview.md`, `README.md`
-- [ ] `yarn lint`, `yarn typecheck`, `yarn test:run`, `yarn build`; commit `docs: F7`; push
+- [x] `backlog.md` (F7 ✅), `metricas.md` (implementação), `0004`, `overview.md`, `README.md`
+- [x] `yarn lint`, `yarn typecheck`, `yarn test:run`, `yarn build`; commit `docs: F7`; push

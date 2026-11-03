@@ -24,7 +24,7 @@ a mesma estrutura, então a moldura, as cores e a acessibilidade precisam de um 
 
 ## Consequências
 
-- F6 moveu `ChartCard` e a paleta para `src/components/`; F7 reusa os dois.
+- F6 moveu `ChartCard` e a paleta para `src/components/`; F7 reusa os dois e extrai `SeriesLegend`.
 - Séries fixas com mais de uma medida na mesma unidade (ex.: receita × CMV, F6) usam os primeiros
   slots da paleta (`paletteColor`), com legenda própria; o par 0/1 passa no validador nos dois modos.
   Eixo de valores monetários comparados começa em 0.

@@ -72,7 +72,10 @@ Métricas derivadas: [métricas](./metricas.md)
 
 - `orders(created_at)`, `order_items(order_id)`, `order_items(product_id)`
 - `purchases(created_at)`, `page_views(created_at, session_id)` (cobertura: período + visitantes
-  únicos sem ler a tabela), `page_views(source)`
+  únicos sem ler a tabela)
+- `page_views(source, created_at)` e `page_views(path, created_at, product_id)` (F7): a ordem do
+  índice elimina a ordenação do GROUP BY por origem/página. O top de páginas usa `INDEXED BY`
+  (o planner preferiria `created_at` e ordenaria ~474 mil linhas em 366 dias).
 - `users(email)` UNIQUE
 
 Os valores permitidos nos CHECK vêm de `src/types/domain.ts` (fonte única para tipos,
@@ -82,7 +85,8 @@ banco e Zod). Mudou um valor? Rode `yarn db:generate` para criar a migration.
 
 - Schema: `src/server/db/schema.ts` · migrations geradas em `drizzle/` (versionadas).
 - `yarn db:generate` cria a migration a partir do schema; `yarn db:migrate` aplica.
-- `createDatabase` liga `foreign_keys` (desligado por padrão no SQLite), WAL e cache de 64 MB em arquivo.
+- `createDatabase` liga `foreign_keys` (desligado por padrão no SQLite), WAL, cache de 64 MB e
+  `mmap_size` de 256 MB em arquivo (os índices das métricas, ~70 MB no seed, passam do cache).
 
 ## Seed (`yarn db:seed`)
 
