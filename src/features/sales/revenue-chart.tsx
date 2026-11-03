@@ -4,7 +4,7 @@ import { LineChart } from '@mui/x-charts/LineChart';
 import { lineClasses } from '@mui/x-charts/LineChart';
 import { formatBucket, formatCompactCurrency, formatCurrency, formatInteger } from '@/lib/format';
 import type { Granularity, RevenuePoint } from '@/types/metrics';
-import { ChartCard } from './chart-card';
+import { ChartCard } from '@/components/chart-card';
 
 const PER: Record<Granularity, string> = { day: 'dia', week: 'semana', month: 'mês' };
 const BUCKET_LABEL: Record<Granularity, string> = { day: 'Dia', week: 'Semana', month: 'Mês' };
