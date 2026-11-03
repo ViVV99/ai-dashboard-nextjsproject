@@ -7,7 +7,7 @@ import { PieChart } from '@mui/x-charts/PieChart';
 import { formatCurrency, formatPercent } from '@/lib/format';
 import type { CategoryRevenue } from '@/types/metrics';
 import { ChartCard } from '@/components/chart-card';
-import { categoryColor, categoryColorVars } from './category-colors';
+import { categoryColor, categoryColorVars } from '@/components/chart-colors';
 
 type Slice = CategoryRevenue & { share: number };
 

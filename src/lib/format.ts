@@ -35,6 +35,13 @@ export function formatKpiValue(format: KpiFormat, value: number | null) {
   return formatInteger(value);
 }
 
+/** Nome do bucket (cabeçalho de tabela) e expressão "por …" das descrições. */
+export const GRANULARITY_TEXT: Record<Granularity, { label: string; per: string }> = {
+  day: { label: 'Dia', per: 'dia' },
+  week: { label: 'Semana', per: 'semana' },
+  month: { label: 'Mês', per: 'mês' },
+};
+
 const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 
 /** Rótulo curto de um bucket: `07/09`, `sem. 07/09` ou `set/26`. */
