@@ -1,3 +1,4 @@
+import type { TrafficSource } from './domain';
 import type { Period } from './period';
 
 // Métricas da visão geral. Fórmulas em .ai/domains/metricas.md.
@@ -88,5 +89,35 @@ export type PurchasesMetrics = {
   series: PurchasesPoint[];
   summary: PurchasesSummary;
   /** Há compra ou venda paga no período. */
+  hasData: boolean;
+};
+
+// Métricas de acessos (F7). Visitante único = `session_id` distinto.
+
+export type TrafficPoint = {
+  /** Chave do bucket (YYYY-MM-DD), como em `RevenuePoint`. */
+  bucket: string;
+  views: number;
+  /** Distintos dentro do bucket: a soma dos buckets pode passar do total do período. */
+  visitors: number;
+};
+
+export type PageRank = {
+  path: string;
+  /** Nome do produto nas páginas de produto; senão o próprio `path`. */
+  label: string;
+  views: number;
+};
+
+export type SourceViews = { source: TrafficSource; views: number };
+
+export type AccessMetrics = {
+  period: Period;
+  granularity: Granularity;
+  /** Um ponto por bucket do período, com 0 onde não houve acesso. */
+  traffic: TrafficPoint[];
+  topPages: PageRank[];
+  /** As 5 origens sempre presentes, por acessos desc (empate: ordem de `TRAFFIC_SOURCES`). */
+  bySource: SourceViews[];
   hasData: boolean;
 };
