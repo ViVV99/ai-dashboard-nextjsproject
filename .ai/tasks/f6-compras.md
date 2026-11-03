@@ -43,9 +43,9 @@ Move `src/features/sales/chart-card.tsx` (+ test) → `src/components/chart-card
 - `fillBuckets<T>(period, granularity, rows: (T & { bucket })[], empty: (bucket) => T): T[]`
 - `ChartCard` importado de `@/components/chart-card` (0004 previa a mudança no 2º uso)
 
-- [ ] Testes RED: `bucketKey` em `purchases.created_at` (02:59Z → D−1; semana → segunda; mês → dia 1);
+- [x] Testes RED: `bucketKey` em `purchases.created_at` (02:59Z → D−1; semana → segunda; mês → dia 1);
       `fillBuckets` preenche faltantes na ordem de `bucketKeys`
-- [ ] Implementar; `sales.test.ts` continua verde; commit `refactor(metrics): buckets e ChartCard compartilhados`
+- [x] Implementar; `sales.test.ts` continua verde; commit `refactor(metrics): buckets e ChartCard compartilhados`
 
 ### Task 2: Service de compras
 
@@ -58,9 +58,9 @@ Move `src/features/sales/chart-card.tsx` (+ test) → `src/components/chart-card
 - `type PurchasesMetrics = { period; granularity; series: PurchasesPoint[]; summary; hasData }`
 - `getPurchasesMetrics(db, period)` · `loadPurchases(period)`
 
-- [ ] Testes RED: Review Focus 1–4; CMV usa `products.cost_cents` (e não `unit_cost_cents`);
+- [x] Testes RED: Review Focus 1–4; CMV usa `products.cost_cents` (e não `unit_cost_cents`);
       resumo = soma da série; `loadPurchases` sem sessão lança 401 sem consultar o banco
-- [ ] Implementar; medir (Review Focus 5); commit `feat(purchases): service de métricas de compras`
+- [x] Implementar; medir (Review Focus 5); commit `feat(purchases): service de métricas de compras`
 
 ### Task 3: Gráficos e página
 
@@ -68,12 +68,12 @@ Move `src/features/sales/chart-card.tsx` (+ test) → `src/components/chart-card
 revenue-cogs-chart), `src/app/(dashboard)/compras/loading.tsx` (+ test) · Modify `compras/page.tsx` ·
 Test colocalizados + `pages.test.tsx`
 
-- [ ] Testes RED: resumo com 4 valores e margem "—" quando `null`; custo de compras com tabela e
+- [x] Testes RED: resumo com 4 valores e margem "—" quando `null`; custo de compras com tabela e
       estado vazio; receita × CMV com legenda das 2 séries, coluna de margem por bucket e estado
       vazio; página chama `loadPurchases` com o período e mostra aviso sem dados
-- [ ] Implementar; verificação no navegador (claro e escuro, mobile); commit `feat(purchases): gráficos`
+- [x] Implementar; verificação no navegador (claro e escuro, mobile); commit `feat(purchases): gráficos`
 
 ### Task 4: Docs e entrega
 
-- [ ] `backlog.md` (F6 ✅), `metricas.md` (implementação), `0004` (ChartCard movido), `overview.md`
-- [ ] `yarn lint`, `yarn typecheck`, `yarn test:run`, `yarn build`; commit `docs: F6`; push
+- [x] `backlog.md` (F6 ✅), `metricas.md` (implementação), `0004` (ChartCard movido), `overview.md`
+- [x] `yarn lint`, `yarn typecheck`, `yarn test:run`, `yarn build`; commit `docs: F6`; push

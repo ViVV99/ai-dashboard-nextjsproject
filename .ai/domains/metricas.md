@@ -55,6 +55,11 @@ Top 10 com desempate por nome. 366 dias no banco do seed ≈ 60 ms. Gráficos: [
 - Margem bruta: `(receita − custo dos itens vendidos) ÷ receita`, onde o custo dos
   itens vendidos é `SUM(order_items.quantity * products.cost_cents)`
 
+**Implementação (F6):** `getPurchasesMetrics` em `src/server/services/metrics/purchases.ts`. Uma série
+por bucket com custo de compras, receita e CMV (buckets compartilhados com vendas em `buckets.ts`);
+receita e CMV só de itens de pedidos pagos, CMV com o custo **atual** do produto. Resumo do período
+com margem bruta (`null` sem receita → "—"). 366 dias no banco do seed ≈ 16 ms.
+
 ## Acessos
 
 - Acessos e visitantes únicos por período (linha/área)

@@ -37,3 +37,4 @@ com gráficos de vendas, compras e acessos.
 - [F3 — Layout e filtro de período: plano de implementação](./tasks/f3-layout.md)
 - [F4 — Visão geral (KPIs): plano de implementação](./tasks/f4-overview.md)
 - [F5 — Vendas: plano de implementação](./tasks/f5-vendas.md)
+- [F6 — Compras: plano de implementação](./tasks/f6-compras.md)
