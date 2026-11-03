@@ -17,6 +17,7 @@ com gráficos de vendas, compras e acessos.
 - [0001 — Stack técnica](./decisions/0001-stack.md)
 - [0002 — Autenticação e perfis](./decisions/0002-auth-e-perfis.md)
 - [0003 — Porta do dev server](./decisions/0003-porta-dev-server.md)
+- [0004 — Padrão dos gráficos](./decisions/0004-graficos.md)
 
 ## Domínio
 
@@ -35,3 +36,4 @@ com gráficos de vendas, compras e acessos.
 - [F2 — Autenticação e perfis: plano de implementação](./tasks/f2-auth.md)
 - [F3 — Layout e filtro de período: plano de implementação](./tasks/f3-layout.md)
 - [F4 — Visão geral (KPIs): plano de implementação](./tasks/f4-overview.md)
+- [F5 — Vendas: plano de implementação](./tasks/f5-vendas.md)

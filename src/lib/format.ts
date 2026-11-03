@@ -1,4 +1,4 @@
-import type { KpiFormat } from '@/types/metrics';
+import type { Granularity, KpiFormat } from '@/types/metrics';
 
 // Formatação pt-BR para a UI. Valores monetários chegam em centavos.
 
@@ -34,3 +34,23 @@ export function formatKpiValue(format: KpiFormat, value: number | null) {
   if (format === 'percent') return formatPercent(value);
   return formatInteger(value);
 }
+
+const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+
+/** Rótulo curto de um bucket: `07/09`, `sem. 07/09` ou `set/26`. */
+export function formatBucket(key: string, granularity: Granularity): string {
+  const month = key.slice(5, 7);
+  if (granularity === 'month') return `${MONTHS[Number(month) - 1]}/${key.slice(2, 4)}`;
+  const dayMonth = `${key.slice(8, 10)}/${month}`;
+  return granularity === 'week' ? `sem. ${dayMonth}` : dayMonth;
+}
+
+const compactCurrency = new Intl.NumberFormat('pt-BR', {
+  style: 'currency',
+  currency: 'BRL',
+  notation: 'compact',
+  maximumFractionDigits: 1,
+});
+
+/** Moeda abreviada para eixos (`R$ 12,3 mil`), a partir de centavos. */
+export const formatCompactCurrency = (cents: number) => compactCurrency.format(cents / 100);

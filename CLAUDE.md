@@ -38,6 +38,7 @@ As pastas que deves adicionar são:
 - **Testes** → toda funcionalidade nova tem teste; todo bug fix tem teste de regressão
 - **Tamanho** → função ≤ 40 linhas; componente ≤ 200 linhas; arquivo ≤ 500 linhas
 - **Nunca** rode comandos perigosos na repo sem confirmação do parceiro humano. Nunca faça algo fora do escopo sem perguntar antes. Em duvida, confira a documentação ou pergunte.
+- Sempre carregue as skills necessárias para sua task em .agents/.
 
 ## Comandos
 

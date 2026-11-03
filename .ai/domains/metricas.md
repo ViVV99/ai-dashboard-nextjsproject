@@ -42,6 +42,12 @@ tabela cobre atual + anterior com agregação condicional. Fórmulas em `src/lib
 - Top 10 produtos por receita e por quantidade (barras)
 - Receita por categoria (pizza/rosca)
 
+**Implementação (F5):** `getSalesMetrics` em `src/server/services/metrics/sales.ts`. Buckets no fuso
+da loja via `date(created_at, '-3 hours', …)`; semana de segunda a domingo (chave = segunda, mesmo
+antes de `from`); mês com chave no dia 1; buckets sem venda com 0 (`src/lib/granularity.ts`).
+Receita de produto/categoria = `SUM(quantity * unit_price_cents)` dos itens de pedidos pagos.
+Top 10 com desempate por nome. 366 dias no banco do seed ≈ 60 ms. Gráficos: [0004](../decisions/0004-graficos.md).
+
 ## Compras
 
 - Custo de compras ao longo do tempo: `SUM(quantity * unit_cost_cents)`
