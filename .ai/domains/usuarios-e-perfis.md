@@ -59,7 +59,8 @@ type UserStatus = 'active' | 'blocked';
 - Mudança + auditoria na **mesma transação**; editar/bloquear sem mudança real não grava nem audita.
   Auditoria: `user.create`, `user.update` (`{ changed: [...] }`), `user.block`, `user.unblock`,
   `user.reset_password`. A tela mostra o nome **atual** do ator e do alvo.
-- Troca da própria senha: `UPDATE` condicionado ao `session_version` da sessão (revogada no meio →
+- Senha atual: no máximo 5 tentativas a cada 15 min por usuário (429), contra força bruta com uma
+  sessão roubada. Troca da própria senha: `UPDATE` condicionado ao `session_version` da sessão (revogada no meio →
   401); a sessão atual é renovada com `signIn` usando a senha nova (nunca com `sessionVersion` vinda
   do cliente). Na UI, o sucesso redireciona para `/perfil?senha=alterada&v=N`: o cookie novo só vale
   no request seguinte. Ações sobre o próprio perfil não são auditadas (não são administrativas).

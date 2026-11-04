@@ -1,11 +1,19 @@
 import type { z } from 'zod';
 import { requireRole, requireUser } from '../auth';
 import { UserRuleError } from '../services/users/errors';
-import { InvalidRequestError, toErrorResponse, zodDetails } from './responses';
+import { errorResponse, InvalidRequestError, toErrorResponse, zodDetails } from './responses';
 
 // Fiação comum dos Route Handlers da API REST (F9). Ver .ai/context/routes.md.
 
 export type Guard = 'admin' | 'user';
+
+// CSRF: um formulário de outro site só consegue enviar text/plain, form-urlencoded ou multipart
+// (SameSite=Lax não barra subdomínios irmãos). Exigir JSON em toda escrita força o preflight de
+// CORS, que esta API não libera. Vale também para escritas sem corpo (block/unblock).
+const SAFE_METHODS = new Set(['GET', 'HEAD']);
+const acceptsJson = (request: Request) =>
+  SAFE_METHODS.has(request.method) ||
+  (request.headers.get('content-type') ?? '').toLowerCase().startsWith('application/json');
 
 /**
  * Autentica **antes** de validar a entrada (sem sessão → 401; viewer em rota admin → 403,
@@ -19,6 +27,13 @@ export function apiRoute<Ctx>(
   return async (request: Request, ctx: Ctx): Promise<Response> => {
     try {
       await (guard === 'admin' ? requireRole('admin') : requireUser());
+      if (!acceptsJson(request)) {
+        return errorResponse(
+          415,
+          'unsupported_media_type',
+          'Envie Content-Type: application/json.',
+        );
+      }
       return await handle(request, ctx);
     } catch (error) {
       return toErrorResponse(error);

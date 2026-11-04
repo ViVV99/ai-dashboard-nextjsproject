@@ -6,7 +6,12 @@ import { UserRuleError, type UserRuleCode } from '../services/users/errors';
 // Respostas JSON da API REST. Formato de erro em .ai/context/routes.md ("API REST").
 
 export type ApiErrorCode =
-  'invalid_request' | 'unauthorized' | 'forbidden' | 'internal_error' | UserRuleCode;
+  | 'invalid_request'
+  | 'unsupported_media_type'
+  | 'unauthorized'
+  | 'forbidden'
+  | 'internal_error'
+  | UserRuleCode;
 
 export type ErrorDetail = { field: string; message: string };
 

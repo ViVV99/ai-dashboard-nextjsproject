@@ -75,7 +75,11 @@ Implementação (F9): `src/app/api/{users,me}/**/route.ts` com `apiRoute` (`src/
 perfil exigido **antes** de validar o corpo (viewer → 403 mesmo com corpo inválido). Corpo JSON
 validado pelos schemas de `src/schemas/users.ts` (JSON quebrado/inválido → 400 com `details`).
 `:id` que não é inteiro positivo → 404. Erros de regra: `not_found` 404, `email_taken` 409,
-`admin_target`/`self_action`/`wrong_password` 422. `POST /api/users` → **201**.
+`admin_target`/`self_action`/`wrong_password` 422, `too_many_attempts` 429 (5 tentativas da senha
+atual a cada 15 min por usuário). `POST /api/users` → **201**.
+**CSRF:** toda escrita (POST/PATCH, inclusive block/unblock sem corpo) exige
+`Content-Type: application/json`, senão **415** `unsupported_media_type`. Formulários de outro site
+não conseguem enviar JSON sem preflight de CORS, que a API não libera.
 Sucesso devolve o usuário (`UserSummary`, sem hash nem `session_version`); `/api/me/password`
 devolve `{ renewed, sessionVersion }` e grava cookie novo (`renewed: false` → entrar de novo).
 

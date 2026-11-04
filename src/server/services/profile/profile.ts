@@ -4,6 +4,7 @@ import type { SessionUser } from '@/types/auth';
 import type { AppDatabase } from '../../db/client';
 import { users } from '../../db/schema';
 import { AuthError } from '../../auth/errors';
+import type { RateLimiter } from '../../auth/rate-limit';
 import { UserRuleError } from '../users/errors';
 
 // Ações do usuário sobre a própria conta (não são administrativas: sem auditoria).
@@ -33,6 +34,7 @@ export async function changeOwnPassword(
   input: ChangePasswordInput,
   verify: Verify,
   hash: Hash,
+  attempts: RateLimiter,
 ): Promise<{ sessionVersion: number }> {
   const current = db
     .select({ passwordHash: users.passwordHash })
@@ -40,9 +42,14 @@ export async function changeOwnPassword(
     .where(eq(users.id, user.id))
     .get();
   if (!current) throw new AuthError('unauthorized');
+  // Sem limite, uma sessão roubada descobriria a senha por força bruta (e cada tentativa
+  // custa um argon2). Conta por usuário, antes do verify.
+  const key = String(user.id);
+  if (!attempts.hit(key).allowed) throw new UserRuleError('too_many_attempts');
   if (!(await verify(current.passwordHash, input.currentPassword))) {
     throw new UserRuleError('wrong_password');
   }
+  attempts.reset(key);
 
   const passwordHash = await hash(input.newPassword);
   const updated = db

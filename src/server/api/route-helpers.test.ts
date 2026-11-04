@@ -44,6 +44,39 @@ describe('apiRoute', () => {
   });
 });
 
+describe('apiRoute — CSRF', () => {
+  // Formulário cross-site só envia text/plain, form-urlencoded ou multipart; JSON exige
+  // preflight de CORS, que a API não libera.
+  it.each([
+    ['text/plain', 'text/plain'],
+    ['form', 'application/x-www-form-urlencoded'],
+    ['sem Content-Type', null],
+  ])('escrita com %s → 415 sem executar', async (_, type) => {
+    const handle = vi.fn();
+    const headers: Record<string, string> = type ? { 'content-type': type } : {};
+    const request = new Request('http://localhost/api/users/7/block', { method: 'POST', headers });
+
+    const response = await apiRoute('admin', handle)(request, {});
+
+    expect(response.status).toBe(415);
+    expect((await response.json()).error.code).toBe('unsupported_media_type');
+    expect(handle).not.toHaveBeenCalled();
+  });
+
+  it('JSON (com charset) e GET passam', async () => {
+    const handle = vi.fn(async () => jsonResponse({}));
+    const json = new Request('http://localhost/api/x', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json; charset=utf-8' },
+    });
+
+    expect((await apiRoute('admin', handle)(json, {})).status).toBe(200);
+    expect(
+      (await apiRoute('admin', handle)(new Request('http://localhost/api/x'), {})).status,
+    ).toBe(200);
+  });
+});
+
 describe('readBody', () => {
   it('devolve o corpo validado', async () => {
     await expect(readBody(post('{"name":"Bia","extra":1}'), schema)).resolves.toEqual({

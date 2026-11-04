@@ -3,6 +3,7 @@ import type { SessionUser } from '@/types/auth';
 import { createDatabase, migrateDatabase, type AppDatabase } from '../../db/client';
 import { auditLogs, users } from '../../db/schema';
 import { loadSessionUser } from '../../auth/session';
+import { createRateLimiter } from '../../auth/rate-limit';
 import { changeOwnPassword, updateOwnName } from './profile';
 
 const hash = async (password: string) => `hash:${password}`;
@@ -16,6 +17,7 @@ const me: SessionUser = {
 };
 const input = { currentPassword: 'velha123', newPassword: 'nova1234', confirmPassword: 'nova1234' };
 let db: AppDatabase;
+const limiter = () => createRateLimiter({ limit: 5, windowMs: 60_000 });
 
 const row = () =>
   db
@@ -49,13 +51,13 @@ describe('updateOwnName', () => {
 describe('changeOwnPassword', () => {
   it('senha atual errada → 422 wrong_password, sem mudança', async () => {
     await expect(
-      changeOwnPassword(db, me, { ...input, currentPassword: 'errada12' }, verify, hash),
+      changeOwnPassword(db, me, { ...input, currentPassword: 'errada12' }, verify, hash, limiter()),
     ).rejects.toMatchObject({ status: 422, code: 'wrong_password' });
     expect(row()).toMatchObject({ passwordHash: 'hash:velha123', sessionVersion: 1 });
   });
 
   it('troca o hash, incrementa session_version e a sessão antiga deixa de valer', async () => {
-    const result = await changeOwnPassword(db, me, input, verify, hash);
+    const result = await changeOwnPassword(db, me, input, verify, hash, limiter());
 
     expect(result).toEqual({ sessionVersion: 2 });
     expect(row()).toMatchObject({ passwordHash: 'hash:nova1234', sessionVersion: 2 });
@@ -66,9 +68,41 @@ describe('changeOwnPassword', () => {
   it('sessão revogada no meio (session_version mudou) → 401, sem trocar a senha', async () => {
     db.update(users).set({ sessionVersion: 5 }).run();
 
-    await expect(changeOwnPassword(db, me, input, verify, hash)).rejects.toMatchObject({
+    await expect(changeOwnPassword(db, me, input, verify, hash, limiter())).rejects.toMatchObject({
       status: 401,
     });
     expect(row()?.passwordHash).toBe('hash:velha123');
+  });
+});
+
+describe('changeOwnPassword — limite de tentativas (força bruta com sessão roubada)', () => {
+  it('a 6ª tentativa em 15 min é recusada com 429 sem rodar o verify', async () => {
+    const attempts = limiter();
+    const wrong = { ...input, currentPassword: 'errada12' };
+    for (let n = 0; n < 5; n++) {
+      await expect(changeOwnPassword(db, me, wrong, verify, hash, attempts)).rejects.toMatchObject({
+        code: 'wrong_password',
+      });
+    }
+    let verified = false;
+    const spy = async (h: string, p: string) => ((verified = true), verify(h, p));
+
+    await expect(changeOwnPassword(db, me, input, spy, hash, attempts)).rejects.toMatchObject({
+      status: 429,
+      code: 'too_many_attempts',
+    });
+    expect(verified).toBe(false);
+    expect(row()?.passwordHash).toBe('hash:velha123');
+  });
+
+  it('acerto zera o contador', async () => {
+    const attempts = limiter();
+    const wrong = { ...input, currentPassword: 'errada12' };
+    for (let n = 0; n < 4; n++) {
+      await changeOwnPassword(db, me, wrong, verify, hash, attempts).catch(() => {});
+    }
+    await changeOwnPassword(db, me, input, verify, hash, attempts);
+
+    expect(attempts.hit('3').allowed).toBe(true);
   });
 });

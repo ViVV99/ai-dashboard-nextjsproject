@@ -95,7 +95,13 @@ describe('/api/users/:id', () => {
     ['block', blockPOST, m.blockUser],
     ['unblock', unblockPOST, m.unblockUser],
   ] as const)('POST %s chama a fachada certa', async (_, POST, facade) => {
-    const response = await POST(new Request(`${url}/users/7/x`, { method: 'POST' }), id('7'));
+    const response = await POST(
+      new Request(`${url}/users/7/x`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+      }),
+      id('7'),
+    );
 
     expect(response.status).toBe(200);
     expect(facade).toHaveBeenCalledWith(7);

@@ -8,6 +8,7 @@ describe('UserRuleError', () => {
     ['admin_target', 422],
     ['self_action', 422],
     ['wrong_password', 422],
+    ['too_many_attempts', 429],
   ] as const)('%s → %i com mensagem em pt-BR', (code, status) => {
     const error = new UserRuleError(code);
 

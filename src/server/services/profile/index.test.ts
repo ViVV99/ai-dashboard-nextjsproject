@@ -45,6 +45,7 @@ describe('fachada de perfil', () => {
       input,
       expect.any(Function),
       expect.any(Function),
+      expect.objectContaining({ hit: expect.any(Function) }),
     );
     expect(m.signIn).toHaveBeenCalledWith('credentials', {
       email: 'bia@x.com',
