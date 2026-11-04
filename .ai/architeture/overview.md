@@ -43,17 +43,19 @@ src/
       auth/[...nextauth]/
       metrics/{overview,sales,purchases,access}/
       users/
-  components/                componentes de UI reutilizáveis (PageHeader, ComingSoon, ChartCard,
-                             SeriesLegend,
+  components/                componentes de UI reutilizáveis (PageHeader, ChartCard,
+                             SeriesLegend, PageLinks,
                              chart-colors: paleta categórica validada)
   features/                  módulos por feature: layout/ (AppShell, menu), period/ (filtro), auth/,
                              overview/ (KPIs), sales/ (vendas), purchases/ (compras e margem),
-                             access/ (acessos, páginas e origens)
+                             access/ (acessos, páginas e origens), users/ (gestão de leitores),
+                             profile/ (nome e senha), audit/ (log)
   server/
     db/                      schema.ts, client.ts, seed/ (geradores puros), cli/ (migrate, seed)
-    services/                metrics, users, audit
+    services/                metrics, users (+ auditoria), profile
+    actions/                 runAction: núcleo das Server Actions (validação, erros, revalidação)
     auth/                    config Auth.js, guards (requireRole)
-    api/                     respostas JSON padronizadas e metricsHandler (Route Handlers)
+    api/                     respostas JSON padronizadas, metricsHandler e apiRoute (Route Handlers)
   schemas/                   schemas Zod compartilhados (client + server)
   types/                     tipos de domínio (domain.ts: fonte única dos valores permitidos)
   lib/                       utilitários (dates.ts: datas YYYY-MM-DD no fuso da loja)

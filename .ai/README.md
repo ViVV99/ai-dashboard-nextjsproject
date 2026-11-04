@@ -40,3 +40,4 @@ com gráficos de vendas, compras e acessos.
 - [F6 — Compras: plano de implementação](./tasks/f6-compras.md)
 - [F7 — Acessos: plano de implementação](./tasks/f7-acessos.md)
 - [F8 — API REST de métricas: plano de implementação](./tasks/f8-api-metricas.md)
+- [F9 — Gestão de usuários e perfil: plano de implementação](./tasks/f9-usuarios.md)

@@ -52,7 +52,7 @@ RHF + Zod 4, MUI (Dialog, Table, Pagination).
 `AuditEntry {id,action,actorName,targetName,metadata,createdAt}`;
 `UserRuleError(code)` com `status` (`not_found` 404, `email_taken` 409, `admin_target`/`self_action`/`wrong_password` 422)
 
-- [ ] RED → GREEN; commit `feat(users): schemas, tipos e erros de regra`
+- [x] RED → GREEN; commit `feat(users): schemas, tipos e erros de regra`
 
 ### Task 2: Services de usuários e auditoria
 
@@ -62,9 +62,9 @@ RHF + Zod 4, MUI (Dialog, Table, Pagination).
 `listAudit(db, page)`; fachada `loadUsers`, `createUser`, `updateUser`, `blockUser`, `unblockUser`,
 `resetUserPassword`, `loadAudit` (todas `requireRole('admin')`, hash argon2)
 
-- [ ] RED: cada regra (404/409/422, admin alvo, a si mesmo), `session_version`, auditoria na
+- [x] RED: cada regra (404/409/422, admin alvo, a si mesmo), `session_version`, auditoria na
       transação (Focus 4), busca escapada (Focus 5), paginação; fachada 403 sem tocar o banco (Focus 1)
-- [ ] Implementar; commit `feat(users): services de usuários e auditoria`
+- [x] Implementar; commit `feat(users): services de usuários e auditoria`
 
 ### Task 3: Service de perfil
 
@@ -72,38 +72,38 @@ RHF + Zod 4, MUI (Dialog, Table, Pagination).
 **Produces:** `updateOwnName(db, user, input)`, `changeOwnPassword(db, user, input, verify, hash)`;
 fachada `updateProfile`, `changePassword` (`requireUser`)
 
-- [ ] RED: nome; senha atual errada 422 sem mudança; troca incrementa `session_version` e a
+- [x] RED: nome; senha atual errada 422 sem mudança; troca incrementa `session_version` e a
       sessão antiga deixa de validar (`loadSessionUser`) (Focus 2/3 no nível do service)
-- [ ] Implementar; commit `feat(profile): service de perfil`
+- [x] Implementar; commit `feat(profile): service de perfil`
 
 ### Task 4: API REST de usuários e perfil
 
 **Files:** Modify `src/server/api/responses.ts` (+ test) · Create `src/server/api/json-handler.ts` + test,
 `src/app/api/users/**/route.ts`, `src/app/api/me/**/route.ts` + `routes.test.ts`
 
-- [ ] RED: `unstable_rethrow`, `UserRuleError` → status, corpo inválido/JSON quebrado → 400, cada
+- [x] RED: `unstable_rethrow`, `UserRuleError` → status, corpo inválido/JSON quebrado → 400, cada
       rota chama o service certo; `/api/me/password` renova a sessão (Focus 3)
-- [ ] Implementar; commit `feat(api): rotas de usuários e perfil`
+- [x] Implementar; commit `feat(api): rotas de usuários e perfil`
 
 ### Task 5: Tela de usuários (admin)
 
 **Files:** Create `src/features/users/*` (actions, users-table, user-form-dialog, confirm-dialog,
 reset-password-dialog, filters) + tests · Modify `src/app/(dashboard)/admin/usuarios/page.tsx` (+ loading)
 
-- [ ] RED: tabela com status e ações só para viewers; filtros na URL; formulários RHF+Zod com erro
+- [x] RED: tabela com status e ações só para viewers; filtros na URL; formulários RHF+Zod com erro
       do servidor no campo (409 no e-mail); confirmação antes de bloquear; actions revalidam
-- [ ] Implementar; navegador (claro/escuro/mobile); commit `feat(users): tela de gestão de usuários`
+- [x] Implementar; navegador (claro/escuro/mobile); commit `feat(users): tela de gestão de usuários`
 
 ### Task 6: Perfil e auditoria (telas)
 
 **Files:** Create `src/features/profile/*`, `src/features/audit/*` + tests · Modify
 `src/app/(dashboard)/perfil/page.tsx`, `src/app/(dashboard)/admin/auditoria/page.tsx`
 
-- [ ] RED: nome atualiza a casca; troca de senha com confirmação e erro na senha atual; auditoria
+- [x] RED: nome atualiza a casca; troca de senha com confirmação e erro na senha atual; auditoria
       paginada com ator, alvo, ação em pt-BR e campos alterados
-- [ ] Implementar; navegador (inclui Focus 2 e 3 com duas sessões); commit `feat(profile): telas de perfil e auditoria`
+- [x] Implementar; navegador (inclui Focus 2 e 3 com duas sessões); commit `feat(profile): telas de perfil e auditoria`
 
 ### Task 7: Docs e entrega
 
-- [ ] `routes.md`, `usuarios-e-perfis.md` (implementação), `backlog.md` (F9 ✅), `overview.md`,
+- [x] `routes.md`, `usuarios-e-perfis.md` (implementação), `backlog.md` (F9 ✅), `overview.md`,
       `autenticacao.md`, `README.md`; lint, typecheck, test:run, build; commit `docs: F9`; push

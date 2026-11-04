@@ -17,7 +17,7 @@ Referências: [arquitetura](../architeture/overview.md) · [rotas](../context/ro
 | F6  | Compras                             | F3         | ✅     |
 | F7  | Acessos                             | F3         | ✅     |
 | F8  | API REST de métricas                | F4–F7      | ✅     |
-| F9  | Gestão de usuários (admin) + perfil | F2, F3     | ⬜     |
+| F9  | Gestão de usuários (admin) + perfil | F2, F3     | ✅     |
 
 ## Critérios de aceite
 
@@ -61,7 +61,7 @@ Referências: [arquitetura](../architeture/overview.md) · [rotas](../context/ro
 
 - Endpoints de [rotas](../context/routes.md) com validação Zod, 400/401/403 padronizados.
 
-### F9 — Gestão de usuários + perfil
+### F9 — Gestão de usuários + perfil ([plano](./f9-usuarios.md))
 
 - Admin: listar (busca e filtro), criar, editar, bloquear/desbloquear e redefinir senha de viewers.
 - Todas as regras de [perfis](../domains/usuarios-e-perfis.md) aplicadas no service, com auditoria.

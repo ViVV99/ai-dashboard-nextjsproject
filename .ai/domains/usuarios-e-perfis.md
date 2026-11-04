@@ -49,3 +49,18 @@ type UserStatus = 'active' | 'blocked';
 | Autenticado, mas sem permissão (viewer em rota admin) | 403    |
 | Violação de regra (ex.: bloquear a si mesmo)          | 422    |
 | E-mail já cadastrado                                  | 409    |
+
+## Implementação (F9)
+
+- Services puros em `src/server/services/{users,profile}`; fachadas exigem admin (`requireRole`)
+  ou sessão (`requireUser`) antes de abrir o banco. Regras violadas → `UserRuleError` (`errors.ts`).
+- Alvo de ação do admin: o próprio ator → `self_action`; inexistente → `not_found`; admin →
+  `admin_target` (regra 1; por isso a regra 3 vale sem checagem extra).
+- Mudança + auditoria na **mesma transação**; editar/bloquear sem mudança real não grava nem audita.
+  Auditoria: `user.create`, `user.update` (`{ changed: [...] }`), `user.block`, `user.unblock`,
+  `user.reset_password`. A tela mostra o nome **atual** do ator e do alvo.
+- Troca da própria senha: `UPDATE` condicionado ao `session_version` da sessão (revogada no meio →
+  401); a sessão atual é renovada com `signIn` usando a senha nova (nunca com `sessionVersion` vinda
+  do cliente). Na UI, o sucesso redireciona para `/perfil?senha=alterada&v=N`: o cookie novo só vale
+  no request seguinte. Ações sobre o próprio perfil não são auditadas (não são administrativas).
+- Busca da lista: `LIKE` com `%`/`_` escapados; 20 por página; senha de 8 a 128 caracteres.

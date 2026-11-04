@@ -1,7 +1,6 @@
 # Rotas e endpoints
 
-Status: páginas implementadas na F3 (casca + filtro; conteúdo nas F4–F9), `/api/auth/*` e a
-API de métricas (F8); a API de usuários e perfil está **planejada** (F9).
+Status: todas as páginas e endpoints abaixo estão implementados (F3–F9).
 Atualizar ao implementar. Autenticação: [detalhes](../architeture/autenticacao.md)
 Permissões: [usuários e perfis](../domains/usuarios-e-perfis.md)
 
@@ -72,5 +71,13 @@ fachada `src/server/services/metrics`. O corpo de sucesso é o objeto do service
 | PATCH  | `/api/me`          | Atualiza o próprio nome             |
 | POST   | `/api/me/password` | Troca a senha (exige a senha atual) |
 
-> Na UI, as mutações usam **Server Actions** que chamam os mesmos services. As rotas
-> REST existem para consumo externo e compartilham os mesmos schemas Zod.
+Implementação (F9): `src/app/api/{users,me}/**/route.ts` com `apiRoute` (`src/server/api/route-helpers.ts`):
+perfil exigido **antes** de validar o corpo (viewer → 403 mesmo com corpo inválido). Corpo JSON
+validado pelos schemas de `src/schemas/users.ts` (JSON quebrado/inválido → 400 com `details`).
+`:id` que não é inteiro positivo → 404. Erros de regra: `not_found` 404, `email_taken` 409,
+`admin_target`/`self_action`/`wrong_password` 422. `POST /api/users` → **201**.
+Sucesso devolve o usuário (`UserSummary`, sem hash nem `session_version`); `/api/me/password`
+devolve `{ renewed, sessionVersion }` e grava cookie novo (`renewed: false` → entrar de novo).
+
+> Na UI, as mutações usam **Server Actions** (`src/features/{users,profile}/actions.ts`, núcleo em
+> `src/server/actions/run-action.ts`) que chamam as mesmas fachadas e schemas.

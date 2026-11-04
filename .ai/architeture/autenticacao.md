@@ -42,8 +42,12 @@ Plano: [F2](../tasks/f2-auth.md)
   remove o cookie. Assim, no proxy, o usuário cai para `/login` sem loop de redirects.
 - `requireUser`/`requireRole` revalidam de novo (defesa em profundidade). Use-os em todo
   service, action e route handler. Em Server Components, use `requirePageUser`.
-- Em route handlers: `catch (e) { return toErrorResponse(e) }` (`src/server/api/responses.ts`):
-  `AuthError` → 401/403; o resto → 500 genérico com log. Ver [rotas](../context/routes.md#api-rest).
+- Em route handlers: `apiRoute('admin' | 'user', handler)` (`src/server/api/route-helpers.ts`), que
+  autentica e converte erros com `toErrorResponse`: `AuthError` → 401/403, `UserRuleError` →
+  404/409/422, entrada inválida → 400, o resto → 500 genérico com log; o controle de fluxo do Next
+  (`redirect`) é relançado. Ver [rotas](../context/routes.md#api-rest).
+- Bloqueio, reset e troca de senha incrementam `session_version`: o callback `jwt` derruba as
+  sessões antigas na leitura seguinte. Ver [perfis › Implementação](../domains/usuarios-e-perfis.md#implementação-f9).
 
 ## Variáveis de ambiente
 
