@@ -46,22 +46,22 @@ profundidade). Respostas de erro num único módulo, reusado pela F9.
 - `parsePeriodQuery(params: URLSearchParams): { ok: true; period } | { ok: false; details }`
 - `metricsHandler<T>(load: (period: Period) => Promise<T>): (request: Request) => Promise<Response>`
 
-- [ ] Testes RED: formatos de erro e `no-store`; Review Focus 1–3; padrão sem query; 400 para
+- [x] Testes RED: formatos de erro e `no-store`; Review Focus 1–3; padrão sem query; 400 para
       só `from`, data inválida, `from > to`, 367 dias, repetido; 200 repassa o período ao `load`
-- [ ] Implementar; commit `feat(api): respostas padronizadas e handler de métricas`
+- [x] Implementar; commit `feat(api): respostas padronizadas e handler de métricas`
 
 ### Task 2: Rotas de métricas
 
 **Files:** Create `src/app/api/metrics/{overview,sales,purchases,access}/route.ts` · Test
 `src/app/api/metrics/routes.test.ts` (ambiente node) · Modify `src/server/auth/routing.test.ts`
 
-- [ ] Testes RED: cada rota repassa o período à fachada certa (Review Focus 5); `routeDecision`
+- [x] Testes RED: cada rota repassa o período à fachada certa (Review Focus 5); `routeDecision`
       para `/api/metrics/sales` sem sessão é `next` (Review Focus 4)
-- [ ] Implementar; verificação com `curl` no dev server (401 sem cookie; 200 e 400 com sessão);
+- [x] Implementar; verificação com `curl` no dev server (401 sem cookie; 200 e 400 com sessão);
       commit `feat(api): rotas GET de métricas`
 
 ### Task 3: Docs e entrega
 
-- [ ] `routes.md` (status, formato de erro com `details`, padrão sem query), `backlog.md` (F8 ✅),
+- [x] `routes.md` (status, formato de erro com `details`, padrão sem query), `backlog.md` (F8 ✅),
       `overview.md`, `README.md`
-- [ ] `yarn lint`, `yarn typecheck`, `yarn test:run`, `yarn build`; commit `docs: F8`; push
+- [x] `yarn lint`, `yarn typecheck`, `yarn test:run`, `yarn build`; commit `docs: F8`; push

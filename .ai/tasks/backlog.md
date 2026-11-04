@@ -16,7 +16,7 @@ Referências: [arquitetura](../architeture/overview.md) · [rotas](../context/ro
 | F5  | Vendas                              | F3         | ✅     |
 | F6  | Compras                             | F3         | ✅     |
 | F7  | Acessos                             | F3         | ✅     |
-| F8  | API REST de métricas                | F4–F7      | ⬜     |
+| F8  | API REST de métricas                | F4–F7      | ✅     |
 | F9  | Gestão de usuários (admin) + perfil | F2, F3     | ⬜     |
 
 ## Critérios de aceite
@@ -57,7 +57,7 @@ Referências: [arquitetura](../architeture/overview.md) · [rotas](../context/ro
 - Estados de carregamento, vazio e erro; granularidade automática.
 - Testes das agregações SQL com a base de teste.
 
-### F8 — API REST de métricas
+### F8 — API REST de métricas ([plano](./f8-api-metricas.md))
 
 - Endpoints de [rotas](../context/routes.md) com validação Zod, 400/401/403 padronizados.
 
