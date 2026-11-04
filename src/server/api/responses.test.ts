@@ -1,6 +1,15 @@
+import { redirect } from 'next/navigation';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { z } from 'zod';
 import { AuthError } from '../auth/errors';
-import { errorResponse, jsonResponse, toErrorResponse } from './responses';
+import { UserRuleError } from '../services/users/errors';
+import {
+  errorResponse,
+  InvalidRequestError,
+  jsonResponse,
+  toErrorResponse,
+  zodDetails,
+} from './responses';
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -54,5 +63,59 @@ describe('toErrorResponse', () => {
     expect(body).toContain('internal_error');
     expect(body).not.toContain('SQLITE');
     expect(log).toHaveBeenCalled();
+  });
+});
+
+describe('toErrorResponse — F9', () => {
+  it.each([
+    ['not_found', 404],
+    ['email_taken', 409],
+    ['admin_target', 422],
+  ] as const)('UserRuleError %s → %i com o código', async (code, status) => {
+    const response = toErrorResponse(new UserRuleError(code));
+
+    expect(response.status).toBe(status);
+    expect((await response.json()).error.code).toBe(code);
+  });
+
+  it('InvalidRequestError → 400 invalid_request com details', async () => {
+    const response = toErrorResponse(
+      new InvalidRequestError([{ field: 'name', message: 'curto' }]),
+    );
+
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({
+      error: {
+        code: 'invalid_request',
+        message: 'Parâmetros inválidos.',
+        details: [{ field: 'name', message: 'curto' }],
+      },
+    });
+  });
+
+  it('não engole o controle de fluxo do Next (redirect/notFound)', () => {
+    let control: unknown;
+    try {
+      redirect('/login');
+    } catch (error) {
+      control = error;
+    }
+
+    expect(() => toErrorResponse(control)).toThrow();
+  });
+});
+
+describe('zodDetails', () => {
+  it('usa o caminho completo do campo e _root para erros do objeto', () => {
+    const schema = z
+      .object({ a: z.object({ b: z.string() }) })
+      .refine(() => false, { message: 'raiz' });
+
+    expect(zodDetails(schema.safeParse({ a: { b: 1 } }).error!)).toEqual([
+      { field: 'a.b', message: expect.any(String) },
+    ]);
+    expect(zodDetails(schema.safeParse({ a: { b: 'x' } }).error!)).toEqual([
+      { field: '_root', message: 'raiz' },
+    ]);
   });
 });

@@ -1,0 +1,9 @@
+import { jsonResponse } from '@/server/api/responses';
+import { apiRoute } from '@/server/api/route-helpers';
+import { unblockUser } from '@/server/services/users';
+import { userId, type UserRouteContext } from '../params';
+
+/** POST /api/users/:id/unblock (admin). */
+export const POST = apiRoute('admin', async (_request, ctx: UserRouteContext) =>
+  jsonResponse(await unblockUser(await userId(ctx))),
+);
