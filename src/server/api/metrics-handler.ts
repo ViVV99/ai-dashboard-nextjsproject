@@ -1,7 +1,13 @@
 import { defaultPeriod, periodSchema } from '@/schemas/period';
 import type { Period } from '@/types/period';
 import { requireUser } from '../auth';
-import { errorResponse, jsonResponse, toErrorResponse, type ErrorDetail } from './responses';
+import {
+  errorResponse,
+  jsonResponse,
+  toErrorResponse,
+  zodDetails,
+  type ErrorDetail,
+} from './responses';
 
 type PeriodQuery = { ok: true; period: Period } | { ok: false; details: ErrorDetail[] };
 
@@ -28,13 +34,7 @@ export function parsePeriodQuery(params: URLSearchParams): PeriodQuery {
     to: params.get('to') ?? '',
   });
   if (parsed.success) return { ok: true, period: parsed.data };
-  return {
-    ok: false,
-    details: parsed.error.issues.map((issue) => ({
-      field: String(issue.path[0] ?? ''),
-      message: issue.message,
-    })),
-  };
+  return { ok: false, details: zodDetails(parsed.error) };
 }
 
 /**

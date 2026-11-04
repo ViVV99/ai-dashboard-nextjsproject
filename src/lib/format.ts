@@ -1,4 +1,5 @@
 import type { Granularity, KpiFormat } from '@/types/metrics';
+import { STORE_OFFSET_MS } from './dates';
 
 // Formatação pt-BR para a UI. Valores monetários chegam em centavos.
 
@@ -41,6 +42,12 @@ export const GRANULARITY_TEXT: Record<Granularity, { label: string; per: string 
   week: { label: 'Semana', per: 'semana' },
   month: { label: 'Mês', per: 'mês' },
 };
+
+/** Timestamp ISO (UTC) → `dd/mm/aaaa hh:mm` no fuso da loja (UTC−3, ver dates.ts). */
+export function formatDateTime(iso: string): string {
+  const local = new Date(Date.parse(iso) - STORE_OFFSET_MS).toISOString();
+  return `${formatDate(local.slice(0, 10))} ${local.slice(11, 16)}`;
+}
 
 const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 

@@ -14,3 +14,10 @@ describe('passwordSchema', () => {
     expect(passwordSchema.safeParse('senhaForte1').success).toBe(true);
   });
 });
+
+describe('passwordSchema — limite', () => {
+  it('recusa mais de 128 caracteres (mesmo limite do login; poupa o argon2)', () => {
+    expect(passwordSchema.safeParse(`a1${'x'.repeat(127)}`).success).toBe(false);
+    expect(passwordSchema.safeParse(`a1${'x'.repeat(126)}`).success).toBe(true);
+  });
+});

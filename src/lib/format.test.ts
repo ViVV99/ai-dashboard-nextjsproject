@@ -8,6 +8,7 @@ import {
   formatPercent,
   formatVariation,
 } from './format';
+import { formatDateTime } from './format';
 
 // Intl usa espaço sem quebra (U+00A0) entre "R$" e o número.
 const plain = (text: string) => text.replace(/ /g, ' ');
@@ -52,5 +53,12 @@ describe('formatCompactCurrency', () => {
   it('abrevia a partir de centavos', () => {
     expect(plain(formatCompactCurrency(12345_67))).toBe('R$ 12,3 mil');
     expect(plain(formatCompactCurrency(500_00))).toBe('R$ 500');
+  });
+});
+
+describe('formatDateTime', () => {
+  it('data e hora no fuso da loja (UTC−3)', () => {
+    expect(formatDateTime('2026-09-03T02:59:00.000Z')).toBe('02/09/2026 23:59');
+    expect(formatDateTime('2026-09-03T15:05:00.000Z')).toBe('03/09/2026 12:05');
   });
 });
