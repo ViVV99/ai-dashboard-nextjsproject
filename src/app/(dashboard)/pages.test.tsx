@@ -9,14 +9,20 @@ import ProfilePage from './perfil/page';
 import AuditPage from './admin/auditoria/page';
 import UsersPage from './admin/usuarios/page';
 
-const { requirePageRole, loadOverview, loadSales, loadPurchases } = vi.hoisted(() => ({
+const { requirePageRole, loadOverview, loadSales, loadPurchases, loadAccess } = vi.hoisted(() => ({
   requirePageRole: vi.fn(),
   loadOverview: vi.fn(),
   loadSales: vi.fn(),
   loadPurchases: vi.fn(),
+  loadAccess: vi.fn(),
 }));
 vi.mock('@/server/auth', () => ({ requirePageRole }));
-vi.mock('@/server/services/metrics', () => ({ loadOverview, loadSales, loadPurchases }));
+vi.mock('@/server/services/metrics', () => ({
+  loadOverview,
+  loadSales,
+  loadPurchases,
+  loadAccess,
+}));
 
 const overview = (hasData = true) => ({
   period: { from: '2026-01-01', to: '2026-01-31' },
@@ -40,6 +46,14 @@ const purchases = (hasData = true) => ({
   granularity: 'day',
   series: [{ bucket: '2026-01-01', purchaseCents: 0, revenueCents: 0, cogsCents: 0 }],
   summary: { purchaseCents: 0, revenueCents: 0, cogsCents: 0, grossMargin: null },
+  hasData,
+});
+const access = (hasData = true) => ({
+  period: { from: '2026-01-01', to: '2026-01-31' },
+  granularity: 'day',
+  traffic: [{ bucket: '2026-01-01', views: hasData ? 3 : 0, visitors: hasData ? 1 : 0 }],
+  topPages: [],
+  bySource: [],
   hasData,
 });
 vi.mock('next/navigation', () => ({
@@ -69,6 +83,7 @@ beforeEach(() => {
   loadOverview.mockReset().mockResolvedValue(overview());
   loadSales.mockReset().mockResolvedValue(sales());
   loadPurchases.mockReset().mockResolvedValue(purchases());
+  loadAccess.mockReset().mockResolvedValue(access());
 });
 
 afterEach(() => {
@@ -153,6 +168,24 @@ describe('compras', () => {
     await renderPage(PurchasesPage as MetricsPage);
 
     expect(screen.getByText('Nenhuma compra ou venda paga neste período.')).toBeInTheDocument();
+  });
+});
+
+describe('acessos', () => {
+  it('carrega os acessos do período resolvido e mostra os três gráficos', async () => {
+    await renderPage(AccessPage as MetricsPage, { from: '2026-01-01', to: '2026-01-31' });
+
+    expect(loadAccess).toHaveBeenCalledWith({ from: '2026-01-01', to: '2026-01-31' });
+    for (const name of ['Acessos e visitantes', 'Páginas mais vistas', 'Acessos por origem']) {
+      expect(screen.getByRole('region', { name })).toBeInTheDocument();
+    }
+  });
+
+  it('período sem acessos mostra aviso', async () => {
+    loadAccess.mockResolvedValue(access(false));
+    await renderPage(AccessPage as MetricsPage);
+
+    expect(screen.getByText('Nenhum acesso neste período.')).toBeInTheDocument();
   });
 });
 

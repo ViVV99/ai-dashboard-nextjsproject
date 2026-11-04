@@ -15,6 +15,13 @@
       "when": 1790708605772,
       "tag": "0001_page_views_covering_index",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1793747339805,
+      "tag": "0002_page_views_source_path_indexes",
+      "breakpoints": true
     }
   ]
 }

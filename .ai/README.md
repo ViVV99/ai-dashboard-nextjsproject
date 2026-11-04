@@ -38,3 +38,4 @@ com gráficos de vendas, compras e acessos.
 - [F4 — Visão geral (KPIs): plano de implementação](./tasks/f4-overview.md)
 - [F5 — Vendas: plano de implementação](./tasks/f5-vendas.md)
 - [F6 — Compras: plano de implementação](./tasks/f6-compras.md)
+- [F7 — Acessos: plano de implementação](./tasks/f7-acessos.md)

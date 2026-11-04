@@ -23,6 +23,11 @@ describe('createDatabase', () => {
     expect(db.$client.pragma('journal_mode', { simple: true })).toBe('wal');
   });
 
+  // Os índices das métricas (~70 MB no seed) não cabem no cache: o mmap usa o cache do SO.
+  it('mapeia até 256 MB do arquivo em memória', () => {
+    expect(fileDatabase().$client.pragma('mmap_size', { simple: true })).toBe(268_435_456);
+  });
+
   // Regressão de desempenho (F4): com o cache padrão (~2 MB) o SQLite relê as páginas do
   // disco a cada consulta; agregações de 1 ano sobre page_views levavam ~2 s.
   it('usa cache de páginas de 64 MB', () => {

@@ -1,7 +1,13 @@
-import type { OverviewMetrics, PurchasesMetrics, SalesMetrics } from '@/types/metrics';
+import type {
+  AccessMetrics,
+  OverviewMetrics,
+  PurchasesMetrics,
+  SalesMetrics,
+} from '@/types/metrics';
 import type { Period } from '@/types/period';
 import { requireUser } from '../../auth';
 import { getDb } from '../../db';
+import { getAccessMetrics } from './access';
 import { getOverviewMetrics } from './overview';
 import { getPurchasesMetrics } from './purchases';
 import { getSalesMetrics } from './sales';
@@ -22,4 +28,9 @@ export async function loadSales(period: Period): Promise<SalesMetrics> {
 export async function loadPurchases(period: Period): Promise<PurchasesMetrics> {
   await requireUser();
   return getPurchasesMetrics(getDb(), period);
+}
+
+export async function loadAccess(period: Period): Promise<AccessMetrics> {
+  await requireUser();
+  return getAccessMetrics(getDb(), period);
 }

@@ -22,6 +22,9 @@ export function createDatabase(url: string): AppDatabase {
     sqlite.pragma('journal_mode = WAL');
     // 64 MB de cache de páginas: sem isso, agregações longas releem o disco a cada consulta.
     sqlite.pragma('cache_size = -65536');
+    // Índices das métricas (~70 MB no seed, F7) passam do cache: com mmap as releituras vêm do
+    // cache de páginas do SO, sem crescer o heap. 1 ano de acessos: ~2,3 s → ~0,5 s.
+    sqlite.pragma('mmap_size = 268435456');
   }
 
   return drizzle({ client: sqlite, schema });

@@ -65,3 +65,10 @@ com margem bruta (`null` sem receita → "—"). 366 dias no banco do seed ≈ 1
 - Acessos e visitantes únicos por período (linha/área)
 - Páginas mais vistas (top 10)
 - Acessos por origem (`source`)
+
+**Implementação (F7):** `getAccessMetrics` em `src/server/services/metrics/access.ts`. Visitantes por
+bucket são distintos **dentro do bucket**: a soma dos buckets pode passar do total do período.
+Top 10 páginas por acessos (desempate por `path`), com o nome do produto nas páginas de produto.
+Origens: as 5 sempre presentes, por acessos (sem visitantes: a spec não pede e custaria um
+`count(DISTINCT)`). 366 dias no seed ≈ 0,5 s (o resto é o `count(DISTINCT session_id)` por
+bucket, como na visão geral); 30 dias ≈ 60 ms. Índices e `mmap`: [schema](./schema.md#índices).

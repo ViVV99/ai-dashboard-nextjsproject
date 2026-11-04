@@ -1,11 +1,10 @@
 'use client';
 
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import { LineChart, lineClasses } from '@mui/x-charts/LineChart';
 import { ChartCard } from '@/components/chart-card';
 import { categoryColorVars, paletteColor } from '@/components/chart-colors';
+import { SeriesLegend } from '@/components/series-legend';
 import {
   formatBucket,
   formatCompactCurrency,
@@ -21,25 +20,6 @@ const SERIES = [
   { id: 'revenue', label: 'Receita', color: paletteColor(0), key: 'revenueCents' },
   { id: 'cogs', label: 'CMV', color: paletteColor(1), key: 'cogsCents' },
 ] as const;
-
-function Legend() {
-  return (
-    <Stack component="ul" aria-label="Legenda" direction="row" spacing={2} sx={{ m: 0, p: 0 }}>
-      {SERIES.map((series) => (
-        <Stack
-          key={series.id}
-          component="li"
-          direction="row"
-          spacing={1}
-          sx={{ alignItems: 'center', listStyle: 'none' }}
-        >
-          <Box aria-hidden sx={{ width: 16, height: 3, borderRadius: 1, bgcolor: series.color }} />
-          <Typography variant="body2">{series.label}</Typography>
-        </Stack>
-      ))}
-    </Stack>
-  );
-}
 
 const margin = (point: PurchasesPoint) =>
   formatKpiValue('percent', ratio(point.revenueCents - point.cogsCents, point.revenueCents));
@@ -76,7 +56,7 @@ export function RevenueCogsChart({ data, granularity }: RevenueCogsChartProps) {
           ...theme.applyStyles('dark', categoryColorVars.dark),
         })}
       >
-        <Legend />
+        <SeriesLegend series={SERIES} />
         <LineChart
           height={300}
           hideLegend

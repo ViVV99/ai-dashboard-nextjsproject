@@ -153,6 +153,8 @@ export const pageViews = sqliteTable(
     check('page_views_source_check', oneOf(t.source, TRAFFIC_SOURCES)),
     // Cobertura: filtro por período + visitantes únicos sem ler a tabela (visão geral, F4).
     index('page_views_created_at_session_idx').on(t.createdAt, t.sessionId),
-    index('page_views_source_idx').on(t.source),
+    // Acessos por origem/página (F7): a ordem do índice elimina a ordenação do GROUP BY.
+    index('page_views_source_created_at_idx').on(t.source, t.createdAt),
+    index('page_views_path_idx').on(t.path, t.createdAt, t.productId),
   ],
 );

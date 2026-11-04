@@ -1,21 +1,28 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthError } from '../../auth/errors';
-import { loadOverview, loadPurchases, loadSales } from './index';
+import { loadAccess, loadOverview, loadPurchases, loadSales } from './index';
 
-const { requireUser, getDb, getOverviewMetrics, getSalesMetrics, getPurchasesMetrics } = vi.hoisted(
-  () => ({
-    requireUser: vi.fn(),
-    getDb: vi.fn(() => 'db'),
-    getOverviewMetrics: vi.fn(() => 'métricas'),
-    getSalesMetrics: vi.fn(() => 'vendas'),
-    getPurchasesMetrics: vi.fn(() => 'compras'),
-  }),
-);
+const {
+  requireUser,
+  getDb,
+  getOverviewMetrics,
+  getSalesMetrics,
+  getPurchasesMetrics,
+  getAccessMetrics,
+} = vi.hoisted(() => ({
+  requireUser: vi.fn(),
+  getDb: vi.fn(() => 'db'),
+  getOverviewMetrics: vi.fn(() => 'métricas'),
+  getSalesMetrics: vi.fn(() => 'vendas'),
+  getPurchasesMetrics: vi.fn(() => 'compras'),
+  getAccessMetrics: vi.fn(() => 'acessos'),
+}));
 vi.mock('../../auth', () => ({ requireUser }));
 vi.mock('../../db', () => ({ getDb }));
 vi.mock('./overview', () => ({ getOverviewMetrics }));
 vi.mock('./sales', () => ({ getSalesMetrics }));
 vi.mock('./purchases', () => ({ getPurchasesMetrics }));
+vi.mock('./access', () => ({ getAccessMetrics }));
 
 const period = { from: '2026-09-01', to: '2026-09-30' };
 
@@ -68,5 +75,21 @@ describe('loadPurchases', () => {
 
     await expect(loadPurchases(period)).resolves.toBe('compras');
     expect(getPurchasesMetrics).toHaveBeenCalledWith('db', period);
+  });
+});
+
+describe('loadAccess', () => {
+  it('exige sessão antes de consultar o banco', async () => {
+    requireUser.mockRejectedValue(new AuthError('unauthorized'));
+
+    await expect(loadAccess(period)).rejects.toMatchObject({ status: 401 });
+    expect(getAccessMetrics).not.toHaveBeenCalled();
+  });
+
+  it('com sessão, calcula os acessos do período no banco da aplicação', async () => {
+    requireUser.mockResolvedValue({ id: 1 });
+
+    await expect(loadAccess(period)).resolves.toBe('acessos');
+    expect(getAccessMetrics).toHaveBeenCalledWith('db', period);
   });
 });
