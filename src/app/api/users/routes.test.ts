@@ -19,7 +19,7 @@ const m = vi.hoisted(() => ({
   unblockUser: vi.fn(async () => 'desbloqueado'),
   resetUserPassword: vi.fn(async () => 'reset'),
   updateProfile: vi.fn(async () => 'perfil'),
-  changePassword: vi.fn(async () => ({ renewed: true })),
+  changePassword: vi.fn(async () => ({ renewed: true, sessionVersion: 2 })),
 }));
 vi.mock('@/server/auth', () => ({ requireUser: m.requireUser, requireRole: m.requireRole }));
 vi.mock('@/server/services/users', () => ({
@@ -126,7 +126,7 @@ describe('/api/me', () => {
     const response = await passwordPOST(json('POST', input), {});
 
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ renewed: true });
+    expect(await response.json()).toEqual({ renewed: true, sessionVersion: 2 });
     expect(m.changePassword).toHaveBeenCalledWith(input);
   });
 });

@@ -37,7 +37,7 @@ describe('fachada de perfil', () => {
   });
 
   it('troca de senha renova a sessão atual com a nova senha (as outras caem)', async () => {
-    await changePassword(input);
+    await expect(changePassword(input)).resolves.toEqual({ renewed: true, sessionVersion: 2 });
 
     expect(m.changeOwnPassword).toHaveBeenCalledWith(
       'db',
@@ -64,6 +64,6 @@ describe('fachada de perfil', () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     m.signIn.mockRejectedValueOnce(new Error('rate_limited'));
 
-    await expect(changePassword(input)).resolves.toEqual({ renewed: false });
+    await expect(changePassword(input)).resolves.toEqual({ renewed: false, sessionVersion: 2 });
   });
 });

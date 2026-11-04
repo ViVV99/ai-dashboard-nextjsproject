@@ -52,7 +52,7 @@ function RowActions({
   if (user.role !== 'viewer') return null;
   const blocked = user.status === 'blocked';
   return (
-    <Stack direction="row" spacing={0.5} sx={{ justifyContent: 'flex-end' }}>
+    <Stack direction="row" spacing={{ xs: 0, md: 0.5 }} sx={{ justifyContent: 'flex-end' }}>
       <ActionButton
         label={`Editar ${user.name}`}
         icon={<EditOutlined fontSize="small" />}
@@ -119,7 +119,7 @@ export function UsersTable({ users, onAction }: UsersTableProps) {
               <TableCell sx={{ ...WIDE_ONLY, whiteSpace: 'nowrap' }}>
                 {formatDateTime(user.createdAt)}
               </TableCell>
-              <TableCell align="right">
+              <TableCell align="right" sx={{ pl: 0, pr: { xs: 1, md: 2 } }}>
                 <RowActions user={user} onAction={onAction} />
               </TableCell>
             </TableRow>

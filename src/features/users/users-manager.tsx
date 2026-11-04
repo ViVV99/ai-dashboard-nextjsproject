@@ -1,12 +1,10 @@
 'use client';
 
-import Pagination from '@mui/material/Pagination';
-import PaginationItem from '@mui/material/PaginationItem';
 import Snackbar from '@mui/material/Snackbar';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import Link from 'next/link';
 import { useState } from 'react';
+import { PageLinks } from '@/components/page-links';
 import type { UserListQuery } from '@/schemas/users';
 import type { UserListPage, UserSummary } from '@/types/users';
 import { ResetPasswordDialog } from './reset-password-dialog';
@@ -17,14 +15,11 @@ import { UsersToolbar } from './users-toolbar';
 
 type Dialog = { type: 'create' } | { type: UserAction; user: UserSummary } | null;
 
-const pageHref = ({ q, status }: UserListQuery, page: number) => {
-  const params = new URLSearchParams();
-  if (q) params.set('q', q);
-  if (status !== 'all') params.set('status', status);
-  if (page > 1) params.set('page', String(page));
-  const query = params.toString();
-  return query ? `/admin/usuarios?${query}` : '/admin/usuarios';
-};
+// Só os filtros que mudam a lista vão para a URL da paginação.
+const filterParams = ({ q, status }: UserListQuery): Record<string, string> => ({
+  ...(q && { q }),
+  ...(status !== 'all' && { status }),
+});
 
 const countLabel = (total: number) => `${total} ${total === 1 ? 'usuário' : 'usuários'}`;
 
@@ -51,15 +46,12 @@ export function UsersManager({ list, query }: { list: UserListPage; query: UserL
         <Typography variant="body2" color="text.secondary">
           {countLabel(list.total)}
         </Typography>
-        {pages > 1 && (
-          <Pagination
-            page={list.page}
-            count={pages}
-            renderItem={(item) => (
-              <PaginationItem component={Link} href={pageHref(query, item.page ?? 1)} {...item} />
-            )}
-          />
-        )}
+        <PageLinks
+          page={list.page}
+          pages={pages}
+          pathname="/admin/usuarios"
+          params={filterParams(query)}
+        />
       </Stack>
       {dialog?.type === 'create' && <UserFormDialog open onClose={close} onDone={done} />}
       {dialog?.type === 'edit' && (

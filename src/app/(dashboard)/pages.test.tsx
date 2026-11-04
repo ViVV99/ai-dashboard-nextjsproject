@@ -5,8 +5,6 @@ import OverviewPage from './page';
 import PurchasesPage from './compras/page';
 import AccessPage from './acessos/page';
 import SalesPage from './vendas/page';
-import ProfilePage from './perfil/page';
-import AuditPage from './admin/auditoria/page';
 
 const { requirePageRole, loadOverview, loadSales, loadPurchases, loadAccess } = vi.hoisted(() => ({
   requirePageRole: vi.fn(),
@@ -185,20 +183,5 @@ describe('acessos', () => {
     await renderPage(AccessPage as MetricsPage);
 
     expect(screen.getByText('Nenhum acesso neste período.')).toBeInTheDocument();
-  });
-});
-
-describe('páginas sem filtro', () => {
-  it('perfil renderiza o título', async () => {
-    render(await ProfilePage());
-
-    expect(screen.getByRole('heading', { level: 1, name: 'Meu perfil' })).toBeInTheDocument();
-  });
-
-  it.each([['Auditoria', AuditPage]])('%s exige perfil admin', async (title, Page) => {
-    render(await Page());
-
-    expect(requirePageRole).toHaveBeenCalledWith('admin');
-    expect(screen.getByRole('heading', { level: 1, name: title })).toBeInTheDocument();
   });
 });

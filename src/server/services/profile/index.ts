@@ -17,19 +17,23 @@ export async function updateProfile(input: ProfileNameInput): Promise<{ name: st
  * renovada com um login usando a senha nova (o usuário acabou de prová-la). Nunca aceitamos
  * `sessionVersion` vinda do cliente: um token revogado poderia se reativar.
  */
-export async function changePassword(input: ChangePasswordInput): Promise<{ renewed: boolean }> {
+export async function changePassword(
+  input: ChangePasswordInput,
+): Promise<{ renewed: boolean; sessionVersion: number }> {
   const user = await requireUser();
-  await changeOwnPassword(getDb(), user, input, verify, (password) => hash(password));
+  const { sessionVersion } = await changeOwnPassword(getDb(), user, input, verify, (password) =>
+    hash(password),
+  );
   try {
     await signIn('credentials', {
       email: user.email,
       password: input.newPassword,
       redirect: false,
     });
-    return { renewed: true };
+    return { renewed: true, sessionVersion };
   } catch (error) {
     // Ex.: rate limit do login. A senha já mudou; o usuário só precisa entrar de novo.
     console.warn('[profile] sessão não renovada após troca de senha', error);
-    return { renewed: false };
+    return { renewed: false, sessionVersion };
   }
 }

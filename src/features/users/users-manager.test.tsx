@@ -47,7 +47,7 @@ describe('UsersManager', () => {
     render(<UsersManager list={list(45, 2)} query={{ ...query, page: 2 }} />);
 
     expect(screen.getByText('45 usuários')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Go to page 3' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Ir para a página 3' })).toHaveAttribute(
       'href',
       '/admin/usuarios?q=ana&status=active&page=3',
     );
