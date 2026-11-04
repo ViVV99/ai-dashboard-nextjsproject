@@ -1,7 +1,7 @@
 # Rotas e endpoints
 
-Status: páginas implementadas na F3 (casca + filtro; conteúdo nas F4–F9) e `/api/auth/*`;
-a API de métricas e usuários está **planejada**.
+Status: páginas implementadas na F3 (casca + filtro; conteúdo nas F4–F9), `/api/auth/*` e a
+API de métricas (F8); a API de usuários e perfil está **planejada** (F9).
 Atualizar ao implementar. Autenticação: [detalhes](../architeture/autenticacao.md)
 Permissões: [usuários e perfis](../domains/usuarios-e-perfis.md)
 
@@ -25,7 +25,10 @@ viewer é redirecionado para `/`.
 
 ## API REST
 
-Todas retornam JSON. Erros usam o formato `{ "error": { "code": string, "message": string } }`.
+Todas retornam JSON com `Cache-Control: no-store`. Erros usam o formato
+`{ "error": { "code": string, "message": string, "details"?: { field, message }[] } }`
+(`details` só no 400). Códigos: `invalid_request` (400), `unauthorized` (401), `forbidden` (403),
+`internal_error` (500, sem detalhes internos). Helpers em `src/server/api/responses.ts`.
 
 ### Auth
 
@@ -42,7 +45,14 @@ Todas retornam JSON. Erros usam o formato `{ "error": { "code": string, "message
 | GET    | `/api/metrics/purchases` | `from`, `to` | série de custo, margem                         |
 | GET    | `/api/metrics/access`    | `from`, `to` | séries de acessos, top páginas, por origem     |
 
-Validação: `from ≤ to`, intervalo máximo de 366 dias → caso contrário **400**.
+Implementação (F8): `src/app/api/metrics/*/route.ts` → `metricsHandler` (`src/server/api/`) →
+fachada `src/server/services/metrics`. O corpo de sucesso é o objeto do service
+(`OverviewMetrics`, `SalesMetrics`, `PurchasesMetrics`, `AccessMetrics` em `src/types/metrics.ts`).
+
+- Autenticação **antes** da validação: sem sessão → **401**, mesmo com query inválida.
+- `from`/`to` validados pelo `periodSchema` das páginas. Sem nenhum dos dois → últimos 30 dias.
+  Só um deles, data inválida, `from > to`, mais de 366 dias ou parâmetro repetido → **400**.
+- Exemplo: `GET /api/metrics/sales?from=2026-09-01&to=2026-09-30` (cookie de sessão do Auth.js).
 
 ### Usuários (admin)
 

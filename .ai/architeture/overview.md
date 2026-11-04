@@ -53,6 +53,7 @@ src/
     db/                      schema.ts, client.ts, seed/ (geradores puros), cli/ (migrate, seed)
     services/                metrics, users, audit
     auth/                    config Auth.js, guards (requireRole)
+    api/                     respostas JSON padronizadas e metricsHandler (Route Handlers)
   schemas/                   schemas Zod compartilhados (client + server)
   types/                     tipos de domínio (domain.ts: fonte única dos valores permitidos)
   lib/                       utilitários (dates.ts: datas YYYY-MM-DD no fuso da loja)
